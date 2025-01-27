@@ -6,6 +6,7 @@ import electronIsDev from 'electron-is-dev'
 import ElectronStore from 'electron-store'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
+import { thirdBaseNote } from ''
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -98,4 +99,11 @@ app.on('window-all-closed', () => {
 
 ipcMain.handle('sample:ping', () => {
 	return 'pong'
+})
+
+thirdBaseNote.invoke.forEach((action) => {
+	ipcMain.handle(action.name, async (event, data) => {
+		const result = await action.togo(data)
+		return result
+	})
 })

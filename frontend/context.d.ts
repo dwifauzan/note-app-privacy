@@ -3,6 +3,7 @@
  *********************************************************************/
 
 export interface IBloopAPI {
+    handleCreateNote: any
 	foo: string
 	ping: () => Promise<string>
 }
