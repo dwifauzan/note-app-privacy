@@ -7,6 +7,9 @@ const nextConfig = {
 	images: {
 		unoptimized: true,
 	},
+	experimental: {
+		optimizePackageImports: ["@chakra-ui/react"]
+	},
 	// Configure SVGR
 	webpack(config) {
 		const fileLoaderRule = config.module.rules.find(rule =>

@@ -3,9 +3,9 @@
  *********************************************************************/
 
 export interface IBloopAPI {
-    handleCreateNote: any
 	foo: string
 	ping: () => Promise<string>
+	handleCreateCore: (data: any) => Promise<any> 
 }
 
 declare global {
