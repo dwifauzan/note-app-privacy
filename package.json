@@ -3,6 +3,9 @@
 	"version": "3.1.0",
 	"main": "backend/build/main.js",
 	"private": true,
+	"workspaces": [
+		"frontend/frontend"
+	],
 	"type": "module",
 	"repository": {
 		"type": "git",
@@ -28,19 +31,18 @@
 	},
 	"packageManager": "yarn@4.2.2",
 	"dependencies": {
-		"@emotion/react": "^11.14.0",
-		"@emotion/styled": "^11.14.0",
-		"@mui/icons-material": "^6.4.2",
-		"@mui/material": "^6.4.2",
 		"@prisma/client": "^6.3.0",
+		"autoprefixer": "^10.4.20",
 		"electron-is-dev": "^3.0.1",
 		"electron-log": "^5.1.4",
 		"electron-store": "^9.0.0",
 		"electron-updater": "6.1.8",
 		"next": "^14.2.3",
+		"postcss": "^8.5.1",
 		"prisma": "^6.3.0",
 		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"react-dom": "^18.3.1",
+		"tailwindcss": "3"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "1",
@@ -59,7 +61,6 @@
 		"@types/react-dom": "^18.3.0",
 		"@typescript-eslint/eslint-plugin": "^7.9.0",
 		"@typescript-eslint/parser": "^7.9.0",
-		"autoprefixer": "^10.4.20",
 		"concurrently": "^8.2.2",
 		"electron": "^30.0.5",
 		"electron-builder": "^24.13.3",
@@ -67,10 +68,8 @@
 		"eslint": "^8.57.0",
 		"eslint-config-next": "^14.2.3",
 		"eslint-plugin-storybook": "^0.6.15",
-		"postcss": "^8.5.1",
 		"prettier": "^3.2.5",
 		"storybook": "^8.1.1",
-		"tailwindcss": "^4.0.1",
 		"tsc-alias": "^1.8.8",
 		"tsconfig-paths-webpack-plugin": "^4.1.0",
 		"typescript": "^5.4.5",

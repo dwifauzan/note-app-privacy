@@ -8,10 +8,18 @@ interface dataCore {
 const handleCreateCore = async (data: dataCore) => {
     try{
         await coreBase.create(data)
-        console.log('status aman pada bridge')
+        return {status: 201, message: 'Success to add new!'}
     }catch(error){
-        console.log('status tidak aman pada bridge')
-        console.log('ini error : ', error)
+        return {status: 400, message: 'something happen! Try again later?'}
+    }
+}
+
+const handleFindAll = async () => {
+    try{
+        const resDatabase = await coreBase.findAll()
+        return resDatabase
+    }catch(error){
+        return {status: 400, message: 'something happen! Try again later?'}
     }
 }
 
@@ -20,6 +28,10 @@ const bridgeDatabase = {
         {
             name: "handleCreateCore",
             togo: handleCreateCore
+        },
+        {
+            name: "handleFindAll",
+            togo: handleFindAll
         }
     ]
 }

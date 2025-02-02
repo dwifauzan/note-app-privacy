@@ -5,5 +5,8 @@ const prisma = new PrismaClient()
 export const coreBase = {
     create: async (data: any) => {
         return await prisma.corebase.create({data})
+    },
+    findAll: async () => {
+        return await prisma.corebase.findMany({})
     }
 }

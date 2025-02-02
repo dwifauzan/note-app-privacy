@@ -6,5 +6,6 @@ const { contextBridge, ipcRenderer } = require('electron')
 contextBridge.exposeInMainWorld('BloopAPI', {
 	foo: 'bar',
 	ping: () => ipcRenderer.invoke('sample:ping'),
-	handleCreateCore: (data: any) => ipcRenderer.invoke("handleCreateCore", data) 
+	handleCreateCore: (data: any) => ipcRenderer.invoke("handleCreateCore", data),
+	handleFindAll: (args: any) => ipcRenderer.invoke("handleFindAll", args)
 })
