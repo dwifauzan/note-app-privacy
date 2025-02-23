@@ -7,6 +7,7 @@ export interface IBloopAPI {
 	ping: () => Promise<string>
 	handleCreateCore: (data: any) => Promise<any> 
 	handleFindAll: () => Promise<any>
+	handleDelete: (id: number) => Promise<any>
 }
 
 declare global {

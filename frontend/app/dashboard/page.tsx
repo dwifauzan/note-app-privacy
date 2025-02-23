@@ -53,6 +53,7 @@ export default function dashboard() {
 
             setTimeout(() => {
                 setShowToast(false);
+                window.location.reload(); // Refresh the page after showing the toast
             }, 3000);
 
         }
@@ -63,7 +64,14 @@ export default function dashboard() {
         <div>
             <Sidebar />
             <div className='p-4 sm:ml-64'>
-                {showToast && <Toast message={toastMessage} type={toastType} />}
+                {/* Move toast to fixed position and add animation classes */}
+                <div className="fixed top-4 right-4 z-50">
+                    {showToast && (
+                        <div className="animate-fade-in-down">
+                            <Toast message={toastMessage} type={toastType} />
+                        </div>
+                    )}
+                </div>
                 {/* breadcumbs */}
                 <nav className="flex pt-5" aria-label="Breadcrumb">
                     <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
@@ -98,9 +106,9 @@ export default function dashboard() {
                         <div
                             className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50"
                         >
-                            <div className="relative p-4 w-full max-w-md max-h-full bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                            <div className="relative p-6 w-full max-w-md max-h-full bg-white rounded-lg shadow-lg transition-transform transform hover:scale-105 dark:bg-gray-800">
                                 {/* Modal Header */}
-                                <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                                <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600 border-gray-200">
                                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                                         Add new Note
                                     </h3>

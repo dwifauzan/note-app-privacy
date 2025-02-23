@@ -23,6 +23,15 @@ const handleFindAll = async () => {
     }
 }
 
+const handleDelete = async (id: number) => {
+    try{
+        await coreBase.delete(id)
+        return {status: 200, message: 'Success to delete!'}
+    }catch(error){
+        return {status: 400, message: 'something happen! Try again later?'}
+    }
+}
+
 const bridgeDatabase = {
     invoke: [
         {
@@ -32,6 +41,10 @@ const bridgeDatabase = {
         {
             name: "handleFindAll",
             togo: handleFindAll
+        },
+        {
+            name: "handleDelete",
+            togo: handleDelete
         }
     ]
 }

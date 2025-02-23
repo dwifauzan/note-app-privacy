@@ -8,5 +8,8 @@ export const coreBase = {
     },
     findAll: async () => {
         return await prisma.corebase.findMany({})
+    },
+    delete: async (id: number) => {
+        return await prisma.corebase.delete({where: {id}})
     }
 }
