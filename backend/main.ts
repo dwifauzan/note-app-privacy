@@ -101,7 +101,7 @@ ipcMain.handle('sample:ping', () => {
 	return 'pong'
 })
 
-bridgeDatabase.invoke.forEach((action) => {
+bridgeDatabase.invoke.forEach(action => {
 	ipcMain.handle(action.name, async (event, data) => {
 		const result = await action.togo(data)
 		return result

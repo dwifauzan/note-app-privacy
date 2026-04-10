@@ -8,7 +8,7 @@ const nextConfig = {
 		unoptimized: true,
 	},
 	experimental: {
-		optimizePackageImports: ["@chakra-ui/react"]
+		optimizePackageImports: ['@chakra-ui/react'],
 	},
 	// Configure SVGR
 	webpack(config) {

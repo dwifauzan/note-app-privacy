@@ -1,7 +1,5 @@
-"use client"
+'use client'
 
 export default function AddNote() {
-  return (
-    <div></div>
-  );
+	return <div></div>
 }

@@ -1,4 +1,4 @@
-"use client"
+'use client'
 import { useEffect, useState } from 'react'
 import Sidebar from './component/sidebar'
 import Image from 'next/image'
@@ -6,8 +6,8 @@ import Cloud from '@/assets/cloud.jpg'
 
 export default function Home() {
 	// Menyimpan waktu dan ucapan dalam state
-	const [time, setTime] = useState<string>("")
-	const [greeting, setGreeting] = useState<string>("")
+	const [time, setTime] = useState<string>('')
+	const [greeting, setGreeting] = useState<string>('')
 
 	// Fungsi untuk memperbarui waktu setiap detik
 	const updateClock = () => {
@@ -30,11 +30,11 @@ export default function Home() {
 
 		// Menentukan ucapan berdasarkan waktu
 		if (hours >= 5 && hours < 12) {
-			setGreeting("Good morning")
+			setGreeting('Good morning')
 		} else if (hours >= 12 && hours < 18) {
-			setGreeting("Good afternoon")
+			setGreeting('Good afternoon')
 		} else {
-			setGreeting("Good night")
+			setGreeting('Good night')
 		}
 	}
 
@@ -53,11 +53,18 @@ export default function Home() {
 	return (
 		<div>
 			<Sidebar />
-			<div className='p-4 sm:ml-64'>
-				<div className='flex justify-center items-center pt-28'>
-					<div className='flex-col gap-3'>
-						<Image src={Cloud.src} width={450} height={450} alt='picture cloudz' />
-						<h3 className='capitalize font-bold text-lg text-center'>{greeting}, what you want to note?</h3>
+			<div className="p-4 sm:ml-64">
+				<div className="flex justify-center items-center pt-28">
+					<div className="flex-col gap-3">
+						<Image
+							src={Cloud.src}
+							width={450}
+							height={450}
+							alt="picture cloudz"
+						/>
+						<h3 className="capitalize font-bold text-lg text-center">
+							{greeting}, what you want to note?
+						</h3>
 
 						{/* Menampilkan jam digital dengan AM/PM */}
 						<div className="text-center mt-5">
