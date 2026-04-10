@@ -1,6 +1,6 @@
 "use client"
 import * as React from 'react';
-import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import Sidebar from '@/component/sidebar';
 import Toast from '@/component/toast';
 import Card from '@/component/card';
