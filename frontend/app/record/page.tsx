@@ -10,7 +10,7 @@ interface FormNote {
 	deskripsi: string
 }
 
-export default function dashboard() {
+export default function Dashboard() {
 	const [modalForm, setModalForm] = useState(false)
 	const [formData, setFormData] = useState<FormNote>({
 		title: '',

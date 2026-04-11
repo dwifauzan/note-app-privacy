@@ -8,7 +8,7 @@ interface getDatabase {
 	updatedAt: string
 }
 
-const card = () => {
+const Card = () => {
 	const [notes, setNote] = useState<getDatabase[]>([])
 	const [selectedNote, setSelectedNote] = useState<getDatabase | null>(null) // State untuk note yang dipilih
 	const [isModalOpen, setIsModalOpen] = useState(false) // State untuk status modal
@@ -205,4 +205,4 @@ const card = () => {
 	)
 }
 
-export default card
+export default Card
