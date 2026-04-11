@@ -181,8 +181,7 @@ const Card = () => {
 							Confirm Deletion
 						</h3>
 						<p className="text-gray-500 dark:text-gray-400 mb-6">
-							Are you sure you want to delete "{noteToDelete.title}"? This
-							action cannot be undone.
+							{`Are you sure you want to delete "${noteToDelete.title}"? This action cannot be undone.`}
 						</p>
 						<div className="flex justify-end gap-3">
 							<button
