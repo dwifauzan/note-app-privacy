@@ -1,9 +1,9 @@
-import { PrismaClient, Corebase } from '@prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
 export const coreBase = {
-	create: async (data: any) => {
+	create: async (data: Prisma.CorebaseCreateInput) => {
 		return await prisma.corebase.create({ data })
 	},
 	findAll: async () => {
