@@ -2,10 +2,15 @@ import Database from '@tauri-apps/plugin-sql'
 import { drizzle } from 'drizzle-orm/sqlite-proxy'
 import * as schema from './schema'
 
+const DB_PATH = '/home/patrick/Documents/note-app-reproject/db/pkm.db'
+
 let sqlitePromise: ReturnType<typeof Database.load> | null = null
 
 async function getSqlite() {
-  if (!sqlitePromise) sqlitePromise = Database.load('sqlite:pkm.db')
+  if (!sqlitePromise) {
+    console.log('Loading database from:', DB_PATH)
+    sqlitePromise = Database.load(`sqlite:${DB_PATH}`)
+  }
   return sqlitePromise
 }
 
@@ -23,7 +28,6 @@ export const db = drizzle(
       return { rows: result }
 
     } catch (err) {
-      fetch('http://127.0.0.1:7426/ingest/31425f3c-77ee-42b5-a01e-af9b21f430fd',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'99a75c'},body:JSON.stringify({sessionId:'99a75c',location:'db/driver.ts:catch',message:'sqlite proxy error',data:{err:String(err),sqlPreview:String(sql).slice(0,240),method},timestamp:Date.now(),hypothesisId:'H3'})}).catch(()=>{});
       console.log('DB error:', err)
       throw err
     }
