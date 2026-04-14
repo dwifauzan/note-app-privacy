@@ -1,27 +1,44 @@
 "use client";
 
+import { useState, useCallback } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import Topbar from "@/components/layout/Topbar";
 import Editor from "@/components/layout/Editor";
 import BacklinksPanel from "@/components/layout/BacklinksPanel";
-import { useNotes } from "@/hooks/usePKM";
-import { useActiveNote } from "@/hooks/usePKM";
-import { useEditor } from "@/hooks/usePKM";
-import { useSidebar } from "@/hooks/usePKM";
+import Modal from "@/components/ui/Modal";
+import { useNotes, useActiveNote, useEditor, useSidebar, Tag, mapDbNoteToNote } from "@/hooks/usePKM";
+import { createNote, deleteNote } from "@/lib/notes";
+import { generateFilePath, writeNoteFile, deleteNoteFile } from "@/lib/files";
+import { getAllTags, createTag, deleteTag, addTagToNote, removeTagFromNote, Tag as DbTag } from "@/lib/tags";
+
+const TAG_COLORS = [
+  { name: "Default", value: "#e8e0d8" },
+  { name: "Red", value: "#f8e0e0" },
+  { name: "Green", value: "#e0f0e8" },
+  { name: "Blue", value: "#e0e8f0" },
+  { name: "Yellow", value: "#f8f0e0" },
+  { name: "Purple", value: "#f0e8f8" },
+];
 
 export default function PKMApp() {
-  const { notes } = useNotes();
+  const { notes, isLoading: notesLoading, refetch } = useNotes();
+  const [activeNoteId, setActiveNoteId] = useState<number>(1);
 
   const {
-    activeNote,
-    currentNote,
+    currentNote: dbCurrentNote,
     currentContent,
+    currentTags,
     currentBacklinks,
-    setActiveNote,
-  } = useActiveNote(1);
+  } = useActiveNote(activeNoteId);
 
-  const { isEditing, editContent, setEditContent, toggleEdit } =
-    useEditor(currentContent);
+  const currentNote = dbCurrentNote ? mapDbNoteToNote(dbCurrentNote, currentTags as unknown as DbTag[]) : undefined;
+
+  const handleSave = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
+  const { isEditing, editContent, setEditContent, saveNote } =
+    useEditor(dbCurrentNote?.id || 0, currentContent, handleSave);
 
   const {
     activeFolder,
@@ -32,10 +49,174 @@ export default function PKMApp() {
     toggleBacklinks,
   } = useSidebar();
 
-  const handleNoteClick = (id: number) => {
-    setActiveNote(id);
-    if (isEditing) toggleEdit(currentContent);
+  // Create note modal
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newNoteTitle, setNewNoteTitle] = useState("");
+  const [newNoteContent, setNewNoteContent] = useState("");
+  const [newNoteFolder, setNewNoteFolder] = useState("inbox");
+  const [isCreating, setIsCreating] = useState(false);
+
+  // Edit note modal
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  // Tags modal
+  const [showTagsModal, setShowTagsModal] = useState(false);
+  const [allTags, setAllTags] = useState<Tag[]>([]);
+  const [newTagName, setNewTagName] = useState("");
+  const [newTagColor, setNewTagColor] = useState(TAG_COLORS[0].value);
+  const [isLoadingTags, setIsLoadingTags] = useState(false);
+
+  // Delete note modal
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const folders = ["inbox", "learning", "projects", "daily", "ideas"];
+
+  const loadTags = useCallback(async () => {
+    try {
+      setIsLoadingTags(true);
+      const tags = await getAllTags();
+      setAllTags(tags);
+    } catch (err) {
+      console.error("Error loading tags:", err);
+    } finally {
+      setIsLoadingTags(false);
+    }
+  }, []);
+
+  const handleOpenTags = () => {
+    loadTags();
+    setShowTagsModal(true);
   };
+
+  const handleCreateTag = async () => {
+    if (!newTagName.trim()) return;
+    try {
+      await createTag({ name: newTagName.trim(), colorTag: newTagColor });
+      setNewTagName("");
+      await loadTags();
+    } catch (err) {
+      console.error("Error creating tag:", err);
+    }
+  };
+
+  const handleDeleteTag = async (id: number) => {
+    try {
+      await deleteTag(id);
+      await loadTags();
+    } catch (err) {
+      console.error("Error deleting tag:", err);
+    }
+  };
+
+  const handleAddTagToNote = async (tagId: number) => {
+    if (!dbCurrentNote) return;
+    try {
+      await addTagToNote(dbCurrentNote.id, tagId);
+      window.location.reload();
+    } catch (err) {
+      console.error("Error adding tag to note:", err);
+    }
+  };
+
+  const handleRemoveTagFromNote = async (tagId: number) => {
+    if (!dbCurrentNote) return;
+    try {
+      await removeTagFromNote(dbCurrentNote.id, tagId);
+      window.location.reload();
+    } catch (err) {
+      console.error("Error removing tag from note:", err);
+    }
+  };
+
+  const handleDeleteNote = async () => {
+    if (!dbCurrentNote) return;
+    try {
+      await deleteNoteFile(dbCurrentNote.filePath);
+      await deleteNote(dbCurrentNote.id);
+      setShowDeleteModal(false);
+      // Navigate to first available note or show empty state
+      if (notes.length > 1) {
+        const nextNote = notes.find(n => n.id !== dbCurrentNote.id);
+        if (nextNote) setActiveNoteId(nextNote.id);
+      } else {
+        setActiveNoteId(0);
+      }
+      await refetch();
+    } catch (err) {
+      console.error("Error deleting note:", err);
+    }
+  };
+
+  const handleNoteClick = (id: number) => {
+    setActiveNoteId(id);
+  };
+
+  const handleNewNote = () => {
+    setNewNoteTitle("");
+    setNewNoteContent("");
+    setShowCreateModal(true);
+  };
+
+  const handleCreateNote = async () => {
+    if (!newNoteTitle.trim()) return;
+
+    try {
+      setIsCreating(true);
+      const filePath = await generateFilePath(newNoteTitle, newNoteFolder);
+      await writeNoteFile(filePath, newNoteContent || `# ${newNoteTitle}\n\n`);
+      const newNote = await createNote({ title: newNoteTitle, filePath, folder: newNoteFolder });
+      await refetch();
+      setActiveNoteId(newNote.id);
+      setShowCreateModal(false);
+    } catch (err) {
+      console.error("Error creating note:", err);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleOpenEdit = () => {
+    if (currentNote) {
+      setEditContent(currentContent);
+      setShowEditModal(true);
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (dbCurrentNote) {
+      try {
+        await saveNote(dbCurrentNote, editContent);
+        setShowEditModal(false);
+      } catch (err) {
+        console.error("Error saving note:", err);
+      }
+    }
+  };
+
+  const handleToggleEdit = () => {
+    if (isEditing) {
+      handleSaveEdit();
+    } else {
+      handleOpenEdit();
+    }
+  };
+
+  if (notesLoading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          height: "100vh",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "#f5f3ee",
+          fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif",
+        }}
+      >
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div
@@ -50,13 +231,13 @@ export default function PKMApp() {
     >
       <Sidebar
         notes={notes}
-        activeNote={activeNote}
+        activeNote={activeNoteId}
         activeFolder={activeFolder}
         search={search}
         onNoteClick={handleNoteClick}
         onFolderChange={setActiveFolder}
         onSearchChange={setSearch}
-        onNewNote={() => console.log("new note")}
+        onNewNote={handleNewNote}
       />
 
       <div
@@ -73,8 +254,10 @@ export default function PKMApp() {
           isEditing={isEditing}
           showBacklinks={showBacklinks}
           backlinkCount={currentBacklinks.length}
-          onToggleEdit={() => toggleEdit(currentContent)}
+          onToggleEdit={handleToggleEdit}
           onToggleBacklinks={toggleBacklinks}
+          onManageTags={handleOpenTags}
+          onDelete={() => setShowDeleteModal(true)}
         />
 
         <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
@@ -84,6 +267,7 @@ export default function PKMApp() {
             isEditing={isEditing}
             editContent={editContent}
             notes={notes}
+            tags={currentTags}
             onLinkClick={handleNoteClick}
             onEditChange={setEditContent}
           />
@@ -96,6 +280,409 @@ export default function PKMApp() {
           )}
         </div>
       </div>
+
+      {/* Create Note Modal */}
+      <Modal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        title="Catatan Baru"
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <div>
+            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "6px", color: "#5a5a52" }}>
+              Judul
+            </label>
+            <input
+              type="text"
+              value={newNoteTitle}
+              onChange={(e) => setNewNoteTitle(e.target.value)}
+              placeholder="Masukkan judul catatan..."
+              autoFocus
+              style={{
+                width: "100%",
+                padding: "10px 12px",
+                border: "1px solid #dddbd4",
+                borderRadius: "8px",
+                fontSize: "14px",
+                background: "#fff",
+                outline: "none",
+                boxSizing: "border-box",
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && newNoteTitle.trim()) {
+                  handleCreateNote();
+                }
+              }}
+            />
+          </div>
+          <div>
+            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "6px", color: "#5a5a52" }}>
+              Folder
+            </label>
+            <select
+              value={newNoteFolder}
+              onChange={(e) => setNewNoteFolder(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "10px 12px",
+                border: "1px solid #dddbd4",
+                borderRadius: "8px",
+                fontSize: "14px",
+                background: "#fff",
+                outline: "none",
+                boxSizing: "border-box",
+                cursor: "pointer",
+              }}
+            >
+              {folders.map((f) => (
+                <option key={f} value={f}>
+                  {f === "inbox" ? "Inbox" : f.charAt(0).toUpperCase() + f.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "6px", color: "#5a5a52" }}>
+              Isi (opsional)
+            </label>
+            <textarea
+              value={newNoteContent}
+              onChange={(e) => setNewNoteContent(e.target.value)}
+              placeholder="Tuliskan isi catatan..."
+              rows={6}
+              style={{
+                width: "100%",
+                padding: "10px 12px",
+                border: "1px solid #dddbd4",
+                borderRadius: "8px",
+                fontSize: "14px",
+                background: "#fff",
+                outline: "none",
+                resize: "vertical",
+                fontFamily: "inherit",
+                boxSizing: "border-box",
+              }}
+            />
+          </div>
+          <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+            <button
+              onClick={() => setShowCreateModal(false)}
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #dddbd4",
+                borderRadius: "7px",
+                background: "#fff",
+                color: "#5a5a52",
+                fontSize: "13px",
+                cursor: "pointer",
+              }}
+            >
+              Batal
+            </button>
+            <button
+              onClick={handleCreateNote}
+              disabled={!newNoteTitle.trim() || isCreating}
+              style={{
+                padding: "8px 16px",
+                border: "none",
+                borderRadius: "7px",
+                background: newNoteTitle.trim() && !isCreating ? "#1a1a18" : "#ccc",
+                color: "#fff",
+                fontSize: "13px",
+                cursor: newNoteTitle.trim() && !isCreating ? "pointer" : "not-allowed",
+              }}
+            >
+              {isCreating ? "Membuat..." : "Buat Catatan"}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Edit Note Modal */}
+      <Modal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        title={`Edit: ${currentNote?.title || ""}`}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <div>
+            <textarea
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              placeholder="Tuliskan isi catatan..."
+              rows={12}
+              autoFocus
+              style={{
+                width: "100%",
+                padding: "12px",
+                border: "1px solid #dddbd4",
+                borderRadius: "8px",
+                fontSize: "14px",
+                background: "#fff",
+                outline: "none",
+                resize: "vertical",
+                fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif",
+                boxSizing: "border-box",
+                lineHeight: "1.6",
+              }}
+            />
+          </div>
+          <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+            <button
+              onClick={() => setShowEditModal(false)}
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #dddbd4",
+                borderRadius: "7px",
+                background: "#fff",
+                color: "#5a5a52",
+                fontSize: "13px",
+                cursor: "pointer",
+              }}
+            >
+              Batal
+            </button>
+            <button
+              onClick={handleSaveEdit}
+              style={{
+                padding: "8px 16px",
+                border: "none",
+                borderRadius: "7px",
+                background: "#1a1a18",
+                color: "#fff",
+                fontSize: "13px",
+                cursor: "pointer",
+              }}
+            >
+              Simpan
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Tags Management Modal */}
+      <Modal
+        isOpen={showTagsModal}
+        onClose={() => setShowTagsModal(false)}
+        title={`Kelola Tags: ${currentNote?.title || ""}`}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          {/* Tags for current note */}
+          <div>
+            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "8px", color: "#5a5a52" }}>
+              Tags pada catatan ini
+            </label>
+            {currentTags.length === 0 ? (
+              <div style={{ fontSize: "13px", color: "#8a8a80", fontStyle: "italic", marginBottom: "12px" }}>
+                Belum ada tag. Tambahkan dari daftar di bawah.
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "12px" }}>
+                {currentTags.map((tag) => (
+                  <div
+                    key={tag.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      padding: "4px 8px",
+                      background: tag.colorTag || "#e8e0d8",
+                      borderRadius: "20px",
+                    }}
+                  >
+                    <span style={{ fontSize: "12px", fontWeight: 500 }}>{tag.name}</span>
+                    <button
+                      onClick={() => handleRemoveTagFromNote(tag.id)}
+                      style={{
+                        padding: "2px 4px",
+                        border: "none",
+                        borderRadius: "50%",
+                        background: "rgba(0,0,0,0.1)",
+                        color: "#5a5a52",
+                        fontSize: "10px",
+                        cursor: "pointer",
+                        lineHeight: 1,
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Add tags to note */}
+          <div>
+            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "8px", color: "#5a5a52" }}>
+              Tambah tag ke catatan ini
+            </label>
+            {isLoadingTags ? (
+              <div style={{ fontSize: "13px", color: "#8a8a80" }}>Loading...</div>
+            ) : allTags.length === 0 ? (
+              <div style={{ fontSize: "13px", color: "#8a8a80", fontStyle: "italic" }}>
+                Belum ada tag. Buat tag baru di bawah.
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                {allTags
+                  .filter((tag) => !currentTags.some((ct) => ct.id === tag.id))
+                  .map((tag) => (
+                    <button
+                      key={tag.id}
+                      onClick={() => handleAddTagToNote(tag.id)}
+                      style={{
+                        padding: "4px 10px",
+                        border: "1px solid #dddbd4",
+                        borderRadius: "20px",
+                        background: "#fff",
+                        color: "#3a3a35",
+                        fontSize: "12px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      + {tag.name}
+                    </button>
+                  ))}
+                {allTags.length > 0 && allTags.every((tag) => currentTags.some((ct) => ct.id === tag.id)) && (
+                  <div style={{ fontSize: "12px", color: "#8a8a80" }}>
+                    Semua tag sudah ditambahkan
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div style={{ height: "1px", background: "#dddbd4" }} />
+
+          {/* Create new tag */}
+          <div>
+            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "8px", color: "#5a5a52" }}>
+              Buat tag baru
+            </label>
+            <div style={{ display: "flex", gap: "8px", alignItems: "flex-end" }}>
+              <div style={{ flex: 1 }}>
+                <input
+                  type="text"
+                  value={newTagName}
+                  onChange={(e) => setNewTagName(e.target.value)}
+                  placeholder="Nama tag..."
+                  style={{
+                    width: "100%",
+                    padding: "8px 10px",
+                    border: "1px solid #dddbd4",
+                    borderRadius: "6px",
+                    fontSize: "13px",
+                    background: "#fff",
+                    outline: "none",
+                    boxSizing: "border-box",
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && newTagName.trim()) {
+                      handleCreateTag();
+                    }
+                  }}
+                />
+              </div>
+              <select
+                value={newTagColor}
+                onChange={(e) => setNewTagColor(e.target.value)}
+                style={{
+                  padding: "8px 10px",
+                  border: "1px solid #dddbd4",
+                  borderRadius: "6px",
+                  fontSize: "13px",
+                  background: "#fff",
+                  outline: "none",
+                  cursor: "pointer",
+                }}
+              >
+                {TAG_COLORS.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={handleCreateTag}
+                disabled={!newTagName.trim()}
+                style={{
+                  padding: "8px 14px",
+                  border: "none",
+                  borderRadius: "6px",
+                  background: newTagName.trim() ? "#1a1a18" : "#ccc",
+                  color: "#fff",
+                  fontSize: "13px",
+                  cursor: newTagName.trim() ? "pointer" : "not-allowed",
+                }}
+              >
+                Tambah
+              </button>
+            </div>
+          </div>
+
+          {/* All tags list */}
+          <div>
+            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "8px", color: "#5a5a52" }}>
+              Semua Tags ({allTags.length})
+            </label>
+            {allTags.length === 0 ? (
+              <div style={{ fontSize: "13px", color: "#8a8a80", fontStyle: "italic" }}>
+                Belum ada tag
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxHeight: "150px", overflowY: "auto" }}>
+                {allTags.map((tag) => (
+                  <div
+                    key={tag.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "8px 10px",
+                      background: tag.colorTag || "#e8e0d8",
+                      borderRadius: "6px",
+                    }}
+                  >
+                    <span style={{ fontSize: "13px", fontWeight: 500 }}>{tag.name}</span>
+                    <button
+                      onClick={() => handleDeleteTag(tag.id)}
+                      style={{
+                        padding: "4px 8px",
+                        border: "none",
+                        borderRadius: "4px",
+                        background: "rgba(0,0,0,0.1)",
+                        color: "#5a5a52",
+                        fontSize: "12px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Hapus
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <button
+              onClick={() => setShowTagsModal(false)}
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #dddbd4",
+                borderRadius: "7px",
+                background: "#fff",
+                color: "#5a5a52",
+                fontSize: "13px",
+                cursor: "pointer",
+              }}
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

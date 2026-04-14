@@ -1,7 +1,11 @@
-import { Backlink } from "@/data/mockData";
+type BacklinkType = {
+  id: number;
+  title: string;
+  ctx: string;
+};
 
 type BacklinksPanelProps = {
-  backlinks: Backlink[];
+  backlinks: BacklinkType[];
   onNoteClick: (id: number) => void;
 };
 

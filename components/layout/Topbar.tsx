@@ -9,6 +9,8 @@ type TopbarProps = {
   backlinkCount: number;
   onToggleEdit: () => void;
   onToggleBacklinks: () => void;
+  onManageTags?: () => void;
+  onDelete?: () => void;
 };
 
 export default function Topbar({
@@ -18,6 +20,8 @@ export default function Topbar({
   backlinkCount,
   onToggleEdit,
   onToggleBacklinks,
+  onManageTags,
+  onDelete,
 }: TopbarProps) {
   return (
     <div
@@ -59,6 +63,22 @@ export default function Topbar({
             margin: "0 4px",
           }}
         />
+
+        {onManageTags && (
+          <Button
+            onClick={onManageTags}
+            active={false}
+            label="Tags"
+          />
+        )}
+
+        {onDelete && (
+          <Button
+            onClick={onDelete}
+            active={false}
+            label="Hapus"
+          />
+        )}
 
         <Button
           onClick={onToggleEdit}
