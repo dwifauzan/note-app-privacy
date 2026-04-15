@@ -6,10 +6,29 @@ import Topbar from "@/components/layout/Topbar";
 import Editor from "@/components/layout/Editor";
 import BacklinksPanel from "@/components/layout/BacklinksPanel";
 import Modal from "@/components/ui/Modal";
-import { useNotes, useActiveNote, useEditor, useSidebar, Tag, mapDbNoteToNote } from "@/hooks/usePKM";
+import DeleteModal from "@/components/ui/DeleteModal";
+import VersionsModal from "@/components/ui/VersionsModal";
+import {
+  useNotes,
+  useActiveNote,
+  useEditor,
+  useSidebar,
+  Tag,
+  mapDbNoteToNote,
+} from "@/hooks/usePKM";
 import { createNote, deleteNote } from "@/lib/notes";
 import { generateFilePath, writeNoteFile, deleteNoteFile } from "@/lib/files";
-import { getAllTags, createTag, deleteTag, addTagToNote, removeTagFromNote, Tag as DbTag } from "@/lib/tags";
+import { exportToPDF, exportToDOCX } from "@/lib/export";
+import { ToastContainer, showToast } from "@/components/ui/Toast";
+import {
+  getAllTags,
+  createTag,
+  deleteTag,
+  addTagToNote,
+  removeTagFromNote,
+  Tag as DbTag,
+} from "@/lib/tags";
+import { getVersionsByNoteId, NoteVersion } from "@/lib/versions";
 
 const TAG_COLORS = [
   { name: "Default", value: "#e8e0d8" },
@@ -31,14 +50,19 @@ export default function PKMApp() {
     currentBacklinks,
   } = useActiveNote(activeNoteId);
 
-  const currentNote = dbCurrentNote ? mapDbNoteToNote(dbCurrentNote, currentTags as unknown as DbTag[]) : undefined;
+  const currentNote = dbCurrentNote
+    ? mapDbNoteToNote(dbCurrentNote, currentTags as unknown as DbTag[])
+    : undefined;
 
   const handleSave = useCallback(() => {
     refetch();
   }, [refetch]);
 
-  const { isEditing, editContent, setEditContent, saveNote } =
-    useEditor(dbCurrentNote?.id || 0, currentContent, handleSave);
+  const { isEditing, editContent, setEditContent, saveNote } = useEditor(
+    dbCurrentNote?.id || 0,
+    currentContent,
+    handleSave,
+  );
 
   const {
     activeFolder,
@@ -68,6 +92,14 @@ export default function PKMApp() {
 
   // Delete note modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // Version history modal
+  const [showVersionsModal, setShowVersionsModal] = useState(false);
+  const [noteVersions, setNoteVersions] = useState<NoteVersion[]>([]);
+  const [isLoadingVersions, setIsLoadingVersions] = useState(false);
+  const [selectedVersionContent, setSelectedVersionContent] = useState<
+    string | null
+  >(null);
 
   const folders = ["inbox", "learning", "projects", "daily", "ideas"];
 
@@ -136,7 +168,7 @@ export default function PKMApp() {
       setShowDeleteModal(false);
       // Navigate to first available note or show empty state
       if (notes.length > 1) {
-        const nextNote = notes.find(n => n.id !== dbCurrentNote.id);
+        const nextNote = notes.find((n) => n.id !== dbCurrentNote.id);
         if (nextNote) setActiveNoteId(nextNote.id);
       } else {
         setActiveNoteId(0);
@@ -144,6 +176,48 @@ export default function PKMApp() {
       await refetch();
     } catch (err) {
       console.error("Error deleting note:", err);
+    }
+  };
+
+  const handleOpenVersions = async () => {
+    if (!dbCurrentNote) return;
+    try {
+      setIsLoadingVersions(true);
+      const versions = await getVersionsByNoteId(dbCurrentNote.id);
+      setNoteVersions(versions);
+      setShowVersionsModal(true);
+    } catch (err) {
+      console.error("Error loading versions:", err);
+    } finally {
+      setIsLoadingVersions(false);
+    }
+  };
+
+  const handleRestoreVersion = (version: NoteVersion) => {
+    setSelectedVersionContent(version.historyContent);
+  };
+
+  const handleConfirmRestore = () => {
+    if (selectedVersionContent && dbCurrentNote) {
+      setEditContent(selectedVersionContent);
+      setShowVersionsModal(false);
+      setShowEditModal(true);
+    }
+  };
+
+  const handleExportPDF = () => {
+    if (currentNote && currentContent) {
+      exportToPDF(currentNote.title, currentContent, currentNote.tags)
+        .then(() => showToast("Berhasil export ke PDF"))
+        .catch(() => showToast("Gagal export PDF", "error"));
+    }
+  };
+
+  const handleExportDOCX = () => {
+    if (currentNote && currentContent) {
+      exportToDOCX(currentNote.title, currentContent, currentNote.tags)
+        .then(() => showToast("Berhasil export ke DOCX"))
+        .catch(() => showToast("Gagal export DOCX", "error"));
     }
   };
 
@@ -164,7 +238,11 @@ export default function PKMApp() {
       setIsCreating(true);
       const filePath = await generateFilePath(newNoteTitle, newNoteFolder);
       await writeNoteFile(filePath, newNoteContent || `# ${newNoteTitle}\n\n`);
-      const newNote = await createNote({ title: newNoteTitle, filePath, folder: newNoteFolder });
+      const newNote = await createNote({
+        title: newNoteTitle,
+        filePath,
+        folder: newNoteFolder,
+      });
       await refetch();
       setActiveNoteId(newNote.id);
       setShowCreateModal(false);
@@ -185,7 +263,7 @@ export default function PKMApp() {
   const handleSaveEdit = async () => {
     if (dbCurrentNote) {
       try {
-        await saveNote(dbCurrentNote, editContent);
+        await saveNote(dbCurrentNote, editContent, currentContent);
         setShowEditModal(false);
       } catch (err) {
         console.error("Error saving note:", err);
@@ -258,6 +336,9 @@ export default function PKMApp() {
           onToggleBacklinks={toggleBacklinks}
           onManageTags={handleOpenTags}
           onDelete={() => setShowDeleteModal(true)}
+          onVersions={handleOpenVersions}
+          onExportPDF={handleExportPDF}
+          onExportDOCX={handleExportDOCX}
         />
 
         <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
@@ -289,7 +370,15 @@ export default function PKMApp() {
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "6px", color: "#5a5a52" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: 500,
+                marginBottom: "6px",
+                color: "#5a5a52",
+              }}
+            >
               Judul
             </label>
             <input
@@ -316,7 +405,15 @@ export default function PKMApp() {
             />
           </div>
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "6px", color: "#5a5a52" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: 500,
+                marginBottom: "6px",
+                color: "#5a5a52",
+              }}
+            >
               Folder
             </label>
             <select
@@ -336,13 +433,23 @@ export default function PKMApp() {
             >
               {folders.map((f) => (
                 <option key={f} value={f}>
-                  {f === "inbox" ? "Inbox" : f.charAt(0).toUpperCase() + f.slice(1)}
+                  {f === "inbox"
+                    ? "Inbox"
+                    : f.charAt(0).toUpperCase() + f.slice(1)}
                 </option>
               ))}
             </select>
           </div>
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "6px", color: "#5a5a52" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: 500,
+                marginBottom: "6px",
+                color: "#5a5a52",
+              }}
+            >
               Isi (opsional)
             </label>
             <textarea
@@ -364,7 +471,9 @@ export default function PKMApp() {
               }}
             />
           </div>
-          <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+          <div
+            style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}
+          >
             <button
               onClick={() => setShowCreateModal(false)}
               style={{
@@ -386,10 +495,14 @@ export default function PKMApp() {
                 padding: "8px 16px",
                 border: "none",
                 borderRadius: "7px",
-                background: newNoteTitle.trim() && !isCreating ? "#1a1a18" : "#ccc",
+                background:
+                  newNoteTitle.trim() && !isCreating ? "#1a1a18" : "#ccc",
                 color: "#fff",
                 fontSize: "13px",
-                cursor: newNoteTitle.trim() && !isCreating ? "pointer" : "not-allowed",
+                cursor:
+                  newNoteTitle.trim() && !isCreating
+                    ? "pointer"
+                    : "not-allowed",
               }}
             >
               {isCreating ? "Membuat..." : "Buat Catatan"}
@@ -427,7 +540,9 @@ export default function PKMApp() {
               }}
             />
           </div>
-          <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+          <div
+            style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}
+          >
             <button
               onClick={() => setShowEditModal(false)}
               style={{
@@ -469,15 +584,37 @@ export default function PKMApp() {
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {/* Tags for current note */}
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "8px", color: "#5a5a52" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: 500,
+                marginBottom: "8px",
+                color: "#5a5a52",
+              }}
+            >
               Tags pada catatan ini
             </label>
             {currentTags.length === 0 ? (
-              <div style={{ fontSize: "13px", color: "#8a8a80", fontStyle: "italic", marginBottom: "12px" }}>
+              <div
+                style={{
+                  fontSize: "13px",
+                  color: "#8a8a80",
+                  fontStyle: "italic",
+                  marginBottom: "12px",
+                }}
+              >
                 Belum ada tag. Tambahkan dari daftar di bawah.
               </div>
             ) : (
-              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "12px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "6px",
+                  flexWrap: "wrap",
+                  marginBottom: "12px",
+                }}
+              >
                 {currentTags.map((tag) => (
                   <div
                     key={tag.id}
@@ -490,7 +627,9 @@ export default function PKMApp() {
                       borderRadius: "20px",
                     }}
                   >
-                    <span style={{ fontSize: "12px", fontWeight: 500 }}>{tag.name}</span>
+                    <span style={{ fontSize: "12px", fontWeight: 500 }}>
+                      {tag.name}
+                    </span>
                     <button
                       onClick={() => handleRemoveTagFromNote(tag.id)}
                       style={{
@@ -514,13 +653,29 @@ export default function PKMApp() {
 
           {/* Add tags to note */}
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "8px", color: "#5a5a52" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: 500,
+                marginBottom: "8px",
+                color: "#5a5a52",
+              }}
+            >
               Tambah tag ke catatan ini
             </label>
             {isLoadingTags ? (
-              <div style={{ fontSize: "13px", color: "#8a8a80" }}>Loading...</div>
+              <div style={{ fontSize: "13px", color: "#8a8a80" }}>
+                Loading...
+              </div>
             ) : allTags.length === 0 ? (
-              <div style={{ fontSize: "13px", color: "#8a8a80", fontStyle: "italic" }}>
+              <div
+                style={{
+                  fontSize: "13px",
+                  color: "#8a8a80",
+                  fontStyle: "italic",
+                }}
+              >
                 Belum ada tag. Buat tag baru di bawah.
               </div>
             ) : (
@@ -544,11 +699,14 @@ export default function PKMApp() {
                       + {tag.name}
                     </button>
                   ))}
-                {allTags.length > 0 && allTags.every((tag) => currentTags.some((ct) => ct.id === tag.id)) && (
-                  <div style={{ fontSize: "12px", color: "#8a8a80" }}>
-                    Semua tag sudah ditambahkan
-                  </div>
-                )}
+                {allTags.length > 0 &&
+                  allTags.every((tag) =>
+                    currentTags.some((ct) => ct.id === tag.id),
+                  ) && (
+                    <div style={{ fontSize: "12px", color: "#8a8a80" }}>
+                      Semua tag sudah ditambahkan
+                    </div>
+                  )}
               </div>
             )}
           </div>
@@ -557,10 +715,20 @@ export default function PKMApp() {
 
           {/* Create new tag */}
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "8px", color: "#5a5a52" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: 500,
+                marginBottom: "8px",
+                color: "#5a5a52",
+              }}
+            >
               Buat tag baru
             </label>
-            <div style={{ display: "flex", gap: "8px", alignItems: "flex-end" }}>
+            <div
+              style={{ display: "flex", gap: "8px", alignItems: "flex-end" }}
+            >
               <div style={{ flex: 1 }}>
                 <input
                   type="text"
@@ -623,15 +791,37 @@ export default function PKMApp() {
 
           {/* All tags list */}
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 500, marginBottom: "8px", color: "#5a5a52" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: 500,
+                marginBottom: "8px",
+                color: "#5a5a52",
+              }}
+            >
               Semua Tags ({allTags.length})
             </label>
             {allTags.length === 0 ? (
-              <div style={{ fontSize: "13px", color: "#8a8a80", fontStyle: "italic" }}>
+              <div
+                style={{
+                  fontSize: "13px",
+                  color: "#8a8a80",
+                  fontStyle: "italic",
+                }}
+              >
                 Belum ada tag
               </div>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxHeight: "150px", overflowY: "auto" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "6px",
+                  maxHeight: "150px",
+                  overflowY: "auto",
+                }}
+              >
                 {allTags.map((tag) => (
                   <div
                     key={tag.id}
@@ -644,7 +834,9 @@ export default function PKMApp() {
                       borderRadius: "6px",
                     }}
                   >
-                    <span style={{ fontSize: "13px", fontWeight: 500 }}>{tag.name}</span>
+                    <span style={{ fontSize: "13px", fontWeight: 500 }}>
+                      {tag.name}
+                    </span>
                     <button
                       onClick={() => handleDeleteTag(tag.id)}
                       style={{
@@ -682,6 +874,27 @@ export default function PKMApp() {
             </button>
           </div>
         </div>
+
+        <DeleteModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleDeleteNote}
+          noteTitle={currentNote?.title}
+        />
+        <VersionsModal
+          isOpen={showVersionsModal}
+          onClose={() => {
+            setShowVersionsModal(false);
+            setSelectedVersionContent(null);
+          }}
+          versions={noteVersions}
+          isLoading={isLoadingVersions}
+          selectedContent={selectedVersionContent}
+          onSelectVersion={handleRestoreVersion}
+          onRestore={handleConfirmRestore}
+          onBack={() => setSelectedVersionContent(null)}
+        />
+        <ToastContainer onMount={(cb) => {}} />
       </Modal>
     </div>
   );

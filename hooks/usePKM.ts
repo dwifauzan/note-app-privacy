@@ -6,6 +6,7 @@ import { getTagsByNoteId, Tag as DbTag } from "@/lib/tags";
 import { getBacklinks, BacklinkWithNote as DbBacklink } from "@/lib/links";
 import { readNoteFile, writeNoteFile } from "@/lib/files";
 import { syncNoteLinks } from "@/lib/links";
+import { createVersion, getVersionsByNoteId, NoteVersion } from "@/lib/versions";
 
 export type Note = {
   id: number;
@@ -155,9 +156,15 @@ export function useEditor(
   }, []);
 
   const saveNote = useCallback(
-    async (note: DbNote, content: string) => {
+    async (note: DbNote, content: string, oldContent?: string) => {
       try {
         setIsSaving(true);
+        
+        // Create version before saving if content changed
+        if (oldContent && oldContent !== content) {
+          await createVersion(note.id, oldContent);
+        }
+        
         await writeNoteFile(note.filePath, content);
 
         const wordCount = content.split(/\s+/).filter(Boolean).length;

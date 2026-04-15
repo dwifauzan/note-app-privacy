@@ -1,7 +1,7 @@
-import { Note } from "@/data/mockData";
+import { Note as PKMNote } from "@/hooks/usePKM";
 
 type NoteItemProps = {
-  note: Note;
+  note: PKMNote;
   active: boolean;
   onClick: () => void;
 };
@@ -39,6 +39,29 @@ export default function NoteItem({ note, active, onClick }: NoteItemProps) {
         )}
         {note.title}
       </div>
+      {note.tags && note.tags.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "3px", marginBottom: "2px" }}>
+          {note.tags.slice(0, 3).map((tag, idx) => (
+            <span
+              key={idx}
+              style={{
+                fontSize: "9px",
+                padding: "1px 5px",
+                background: "#e0ddd6",
+                borderRadius: "4px",
+                color: "#5a5a52",
+              }}
+            >
+              {tag}
+            </span>
+          ))}
+          {note.tags.length > 3 && (
+            <span style={{ fontSize: "9px", color: "#9a9a90" }}>
+              +{note.tags.length - 3}
+            </span>
+          )}
+        </div>
+      )}
       <div style={{ fontSize: "11px", color: "#9a9a90" }}>{note.updated}</div>
     </div>
   );

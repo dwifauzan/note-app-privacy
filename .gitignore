@@ -8,6 +8,9 @@ frontend/build
 frontend/.next
 frontend/next-env.d.ts
 
+#ignore session
+session-ses_2735.md
+
 # Logs
 logs
 *.log

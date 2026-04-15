@@ -1,9 +1,9 @@
 import Button from "@/components/ui/Button";
 import Tag from "@/components/ui/Tag";
-import { Note } from "@/data/mockData";
+import { Note as PKMNote } from "@/hooks/usePKM";
 
 type TopbarProps = {
-  note: Note | undefined;
+  note: PKMNote | undefined;
   isEditing: boolean;
   showBacklinks: boolean;
   backlinkCount: number;
@@ -11,6 +11,9 @@ type TopbarProps = {
   onToggleBacklinks: () => void;
   onManageTags?: () => void;
   onDelete?: () => void;
+  onVersions?: () => void;
+  onExportPDF?: () => void;
+  onExportDOCX?: () => void;
 };
 
 export default function Topbar({
@@ -22,6 +25,9 @@ export default function Topbar({
   onToggleBacklinks,
   onManageTags,
   onDelete,
+  onVersions,
+  onExportPDF,
+  onExportDOCX,
 }: TopbarProps) {
   return (
     <div
@@ -77,6 +83,30 @@ export default function Topbar({
             onClick={onDelete}
             active={false}
             label="Hapus"
+          />
+        )}
+
+        {onVersions && (
+          <Button
+            onClick={onVersions}
+            active={false}
+            label="Versi"
+          />
+        )}
+
+        {onExportPDF && (
+          <Button
+            onClick={onExportPDF}
+            active={false}
+            label="PDF"
+          />
+        )}
+
+        {onExportDOCX && (
+          <Button
+            onClick={onExportDOCX}
+            active={false}
+            label="DOCX"
           />
         )}
 
