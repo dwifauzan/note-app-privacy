@@ -88,9 +88,3 @@ npm run db:generate   # generate file migration from schema database
 npm run db:migrate    # running migration to database
 npm run db:studio     # open Drizzle Studio for look inside database
 ```
----
-
-## License
-
-This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.
-Developed by fauzan.
