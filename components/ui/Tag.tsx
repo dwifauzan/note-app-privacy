@@ -7,11 +7,11 @@ export default function Tag({ name, color }: TagProps) {
   return (
     <span
       style={{
-        fontSize: "10px",
-        padding: "2px 8px",
+        fontSize: "11px",
+        padding: "3px 10px",
         borderRadius: "20px",
-        background: color || "#e8e0d8",
-        color: "#3a3a35",
+        background: color || "#f1f5f9",
+        color: "#64748b",
         fontWeight: 500,
       }}
     >

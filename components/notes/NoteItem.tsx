@@ -11,58 +11,57 @@ export default function NoteItem({ note, active, onClick }: NoteItemProps) {
     <div
       onClick={onClick}
       style={{
-        padding: "8px 10px",
-        borderRadius: "7px",
+        padding: "10px 12px",
+        borderRadius: "10px",
         cursor: "pointer",
-        background: active ? "#e0ddd6" : "transparent",
-        marginBottom: "1px",
-        borderLeft: active ? "2px solid #5c7a5c" : "2px solid transparent",
+        background: active ? "#f3e8ff" : "transparent",
+        marginBottom: "2px",
+        transition: "all 0.15s ease",
+        border: active ? "1px solid #7c3aed" : "1px solid transparent",
       }}
     >
       <div
         style={{
-          fontSize: "12px",
-          fontWeight: active ? 500 : 400,
-          color: active ? "#1a1a18" : "#3a3a35",
-          marginBottom: "2px",
+          fontSize: "13px",
+          fontWeight: active ? 600 : 500,
+          color: active ? "#7c3aed" : "#334155",
+          marginBottom: "4px",
           whiteSpace: "nowrap",
           overflow: "hidden",
           textOverflow: "ellipsis",
         }}
       >
         {note.pinned && (
-          <span
-            style={{ color: "#8a8a80", marginRight: "4px", fontSize: "10px" }}
-          >
-            ⊙
+          <span style={{ color: "#d97706", marginRight: "4px", fontSize: "10px" }}>
+            📌
           </span>
         )}
         {note.title}
       </div>
       {note.tags && note.tags.length > 0 && (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "3px", marginBottom: "2px" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "4px" }}>
           {note.tags.slice(0, 3).map((tag, idx) => (
             <span
               key={idx}
               style={{
-                fontSize: "9px",
-                padding: "1px 5px",
-                background: "#e0ddd6",
+                fontSize: "10px",
+                padding: "2px 6px",
+                background: "#f1f5f9",
                 borderRadius: "4px",
-                color: "#5a5a52",
+                color: "#64748b",
               }}
             >
               {tag}
             </span>
           ))}
           {note.tags.length > 3 && (
-            <span style={{ fontSize: "9px", color: "#9a9a90" }}>
+            <span style={{ fontSize: "10px", color: "#94a3b8" }}>
               +{note.tags.length - 3}
             </span>
           )}
         </div>
       )}
-      <div style={{ fontSize: "11px", color: "#9a9a90" }}>{note.updated}</div>
+      <div style={{ fontSize: "11px", color: "#94a3b8" }}>{note.updated}</div>
     </div>
   );
 }

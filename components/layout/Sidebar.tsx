@@ -4,6 +4,15 @@ import NoteItem from "@/components/notes/NoteItem";
 import SearchInput from "@/components/ui/SearchInput";
 import { FOLDERS, Note } from "@/data/mockData";
 
+const FOLDER_COLORS: Record<string, { bg: string; text: string }> = {
+  semua: { bg: "#e2e8f0", text: "#475569" },
+  inbox: { bg: "#f3e8ff", text: "#7c3aed" },
+  learning: { bg: "#e0f2fe", text: "#0284c7" },
+  projects: { bg: "#dcfce7", text: "#16a34a" },
+  daily: { bg: "#fef3c7", text: "#d97706" },
+  ideas: { bg: "#fce7f3", text: "#db2777" },
+};
+
 type SidebarProps = {
   notes: Note[];
   activeNote: number;
@@ -37,92 +46,73 @@ export default function Sidebar({
   return (
     <div
       style={{
-        width: "240px",
+        width: "260px",
         flexShrink: 0,
-        background: "#efede8",
-        borderRight: "1px solid #dddbd4",
+        background: "#ffffff",
+        borderRight: "1px solid #e2e8f0",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
       }}
     >
-      {/* App title */}
-      <div
-        style={{ padding: "20px 16px 12px", borderBottom: "1px solid #dddbd4" }}
-      >
+      <div style={{ padding: "20px 20px 16px" }}>
         <div
           style={{
-            fontSize: "13px",
-            fontWeight: 600,
-            letterSpacing: "0.08em",
-            color: "#1a1a18",
-            textTransform: "uppercase",
+            fontSize: "20px",
+            fontWeight: 700,
+            color: "#7c3aed",
+            letterSpacing: "-0.02em",
           }}
         >
           PKM
         </div>
-        <div style={{ fontSize: "11px", color: "#8a8a80", marginTop: "2px" }}>
+        <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "2px" }}>
           Personal Knowledge
         </div>
       </div>
 
-      {/* Search */}
-      <div style={{ padding: "10px 12px", borderBottom: "1px solid #dddbd4" }}>
+      <div style={{ padding: "0 16px 16px" }}>
         <SearchInput value={search} onChange={onSearchChange} />
       </div>
 
-      {/* Folders */}
-      <div style={{ padding: "10px 8px 6px" }}>
-        <div
-          style={{
-            fontSize: "10px",
-            fontWeight: 600,
-            color: "#a0a098",
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            padding: "0 8px",
-            marginBottom: "4px",
-          }}
-        >
-          Folder
-        </div>
-        {FOLDERS.map((f) => (
-          <div
-            key={f}
-            onClick={() => onFolderChange(f)}
-            style={{
-              padding: "6px 10px",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontSize: "12px",
-              fontWeight: activeFolder === f ? 500 : 400,
-              background: activeFolder === f ? "#e0ddd6" : "transparent",
-              color: activeFolder === f ? "#1a1a18" : "#5a5a52",
-              marginBottom: "1px",
-              textTransform: "capitalize",
-            }}
-          >
-            {f}
-          </div>
-        ))}
+      <div style={{ padding: "0 8px 8px" }}>
+        {FOLDERS.map((f) => {
+          const colors = FOLDER_COLORS[f] || FOLDER_COLORS.inbox;
+          const isActive = activeFolder === f;
+          return (
+            <div
+              key={f}
+              onClick={() => onFolderChange(f)}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontSize: "13px",
+                fontWeight: isActive ? 600 : 500,
+                background: isActive ? colors.bg : "transparent",
+                color: isActive ? colors.text : "#475569",
+                marginBottom: "2px",
+                textTransform: "capitalize",
+                transition: "all 0.15s ease",
+              }}
+            >
+              {f}
+            </div>
+          );
+        })}
       </div>
 
-      <div
-        style={{ height: "1px", background: "#dddbd4", margin: "6px 12px" }}
-      />
-
-      {/* Note list */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "4px 8px 12px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "8px 8px 16px" }}>
         {pinned.length > 0 && (
           <>
             <div
               style={{
-                fontSize: "10px",
+                fontSize: "11px",
                 fontWeight: 600,
-                color: "#a0a098",
-                letterSpacing: "0.08em",
+                color: "#94a3b8",
+                letterSpacing: "0.05em",
                 textTransform: "uppercase",
-                padding: "6px 10px 4px",
+                padding: "8px 12px 6px",
               }}
             >
               Pinned
@@ -143,12 +133,12 @@ export default function Sidebar({
             {pinned.length > 0 && (
               <div
                 style={{
-                  fontSize: "10px",
+                  fontSize: "11px",
                   fontWeight: 600,
-                  color: "#a0a098",
-                  letterSpacing: "0.08em",
+                  color: "#94a3b8",
+                  letterSpacing: "0.05em",
                   textTransform: "uppercase",
-                  padding: "8px 10px 4px",
+                  padding: "12px 12px 6px",
                 }}
               >
                 Catatan
@@ -169,8 +159,8 @@ export default function Sidebar({
           <div
             style={{
               padding: "20px 10px",
-              fontSize: "12px",
-              color: "#a0a098",
+              fontSize: "13px",
+              color: "#94a3b8",
               textAlign: "center",
             }}
           >
@@ -179,24 +169,28 @@ export default function Sidebar({
         )}
       </div>
 
-      {/* New note button */}
-      <div style={{ padding: "10px 12px", borderTop: "1px solid #dddbd4" }}>
+      <div style={{ padding: "12px 16px", borderTop: "1px solid #e2e8f0" }}>
         <button
           onClick={onNewNote}
           style={{
             width: "100%",
-            padding: "8px",
-            background: "#1a1a18",
-            color: "#f5f3ee",
+            padding: "12px",
+            background: "#7c3aed",
+            color: "#ffffff",
             border: "none",
-            borderRadius: "7px",
-            fontSize: "12px",
-            fontWeight: 500,
+            borderRadius: "10px",
+            fontSize: "14px",
+            fontWeight: 600,
             cursor: "pointer",
-            letterSpacing: "0.02em",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+            boxShadow: "0 2px 8px rgba(124, 58, 237, 0.3)",
           }}
         >
-          + Catatan baru
+          <span style={{ fontSize: "18px", lineHeight: 1 }}>+</span>
+          Catatan Baru
         </button>
       </div>
     </div>

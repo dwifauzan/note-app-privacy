@@ -32,13 +32,13 @@ export default function Topbar({
   return (
     <div
       style={{
-        height: "48px",
-        borderBottom: "1px solid #dddbd4",
+        height: "56px",
+        borderBottom: "1px solid #e2e8f0",
         display: "flex",
         alignItems: "center",
         padding: "0 24px",
-        gap: "12px",
-        background: "#f5f3ee",
+        gap: "8px",
+        background: "#f8fafc",
         flexShrink: 0,
       }}
     >
@@ -46,11 +46,11 @@ export default function Topbar({
       <div
         style={{ flex: 1, display: "flex", alignItems: "center", gap: "8px" }}
       >
-        <span style={{ fontSize: "12px", color: "#8a8a80" }}>
+        <span style={{ fontSize: "13px", color: "#94a3b8", fontWeight: 500 }}>
           {note?.folder}
         </span>
-        <span style={{ color: "#c0bdb6" }}>/</span>
-        <span style={{ fontSize: "13px", fontWeight: 500, color: "#1a1a18" }}>
+        <span style={{ color: "#e2e8f0" }}>/</span>
+        <span style={{ fontSize: "14px", fontWeight: 600, color: "#1e293b" }}>
           {note?.title}
         </span>
       </div>
@@ -61,14 +61,16 @@ export default function Topbar({
           <Tag key={t} name={t} />
         ))}
 
-        <div
-          style={{
-            width: "1px",
-            height: "16px",
-            background: "#dddbd4",
-            margin: "0 4px",
-          }}
-        />
+        {note?.tags && note.tags.length > 0 && (
+          <div
+            style={{
+              width: "1px",
+              height: "20px",
+              background: "#e2e8f0",
+              margin: "0 8px",
+            }}
+          />
+        )}
 
         {onManageTags && (
           <Button

@@ -31,25 +31,23 @@ export default function Editor({
   onEditChange,
 }: EditorProps) {
   return (
-    <div style={{ flex: 1, overflowY: "auto", padding: "40px 56px" }}>
+    <div style={{ flex: 1, overflowY: "auto", padding: "32px 48px", background: "#f8fafc" }}>
       {isEditing ? (
         <NoteEditor content={editContent} onChange={onEditChange} />
       ) : (
-        <div style={{ maxWidth: "640px" }}>
-          {/* Tags display */}
+        <div style={{ maxWidth: "720px" }}>
           {tags.length > 0 && (
-            <div style={{ display: "flex", gap: "6px", marginBottom: "12px", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: "6px", marginBottom: "16px", flexWrap: "wrap" }}>
               {tags.map((tag) => (
-                <Tag key={tag.id} name={tag.name} color={tag.colorTag || "#e8e0d8"} />
+                <Tag key={tag.id} name={tag.name} color={tag.colorTag || "#f1f5f9"} />
               ))}
             </div>
           )}
 
-          {/* Meta info */}
           <div
             style={{
-              fontSize: "11px",
-              color: "#a0a098",
+              fontSize: "12px",
+              color: "#94a3b8",
               marginBottom: "24px",
               display: "flex",
               gap: "16px",

@@ -13,16 +13,15 @@ export default function Button({
     <button
       onClick={onClick}
       style={{
-        padding: "4px 12px",
-        fontSize: "11px",
+        padding: "6px 14px",
+        fontSize: "12px",
         fontWeight: 500,
-        border: "1px solid",
-        borderColor: active ? "#5c7a5c" : "#dddbd4",
+        border: "none",
         borderRadius: "6px",
-        background: active ? "#eaf2ea" : "transparent",
-        color: active ? "#3a5c3a" : "#6a6a62",
+        background: active ? "#7c3aed" : "#f1f5f9",
+        color: active ? "#ffffff" : "#64748b",
         cursor: "pointer",
-        transition: "all .15s",
+        transition: "all 0.15s ease",
       }}
     >
       {label}

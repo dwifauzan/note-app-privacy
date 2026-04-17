@@ -10,14 +10,15 @@ export default function NoteEditor({ content, onChange }: NoteEditorProps) {
       onChange={(e) => onChange(e.target.value)}
       style={{
         width: "100%",
+        maxWidth: "720px",
         minHeight: "calc(100vh - 200px)",
         background: "transparent",
         border: "none",
         outline: "none",
-        fontSize: "14px",
-        lineHeight: "1.75",
-        color: "#1a1a18",
-        fontFamily: "'DM Mono', 'Fira Code', monospace",
+        fontSize: "15px",
+        lineHeight: "1.8",
+        color: "#1e293b",
+        fontFamily: "'SF Mono', 'Fira Code', 'Monaco', monospace",
         resize: "none",
         boxSizing: "border-box",
       }}

@@ -1,8 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #1e293b;
+  --sidebar-bg: #ffffff;
+  --editor-bg: #ffffff;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --text-muted: #475569;
+  --text-muted-light: #94a3b8;
+  --accent: #7c3aed;
+  --accent-light: #f3e8ff;
+  --accent-hover: #6d28d9;
+  --danger: #dc2626;
+  --success: #16a34a;
+  --primary: #7c3aed;
+  --primary-light: #a78bfa;
+  --secondary: #ec4899;
+  --tertiary: #0891b2;
+  --quaternary: #d97706;
 }
 
 @theme inline {
@@ -14,13 +30,66 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f172a;
+    --foreground: #f1f5f9;
+    --sidebar-bg: #1e293b;
+    --editor-bg: #0f172a;
+    --border: #334155;
+    --border-light: #1e293b;
+    --text-muted: #94a3b8;
+    --text-muted-light: #64748b;
+    --accent: #a78bfa;
+    --accent-light: #2e1065;
+    --accent-hover: #7c3aed;
+    --primary: #a78bfa;
+    --primary-light: #c4b5fd;
+    --secondary: #f472b6;
+    --tertiary: #22d3ee;
+    --quaternary: #fbbf24;
   }
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+input, textarea, select, button {
+  font-family: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: #475569;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+  }
 }

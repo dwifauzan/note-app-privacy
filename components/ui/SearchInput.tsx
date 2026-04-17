@@ -11,13 +11,13 @@ export default function SearchInput({ value, onChange }: SearchInputProps) {
       placeholder="Cari catatan..."
       style={{
         width: "100%",
-        padding: "7px 10px",
-        fontSize: "12px",
-        background: "#e8e6e0",
-        border: "1px solid #d5d3cc",
-        borderRadius: "6px",
+        padding: "10px 14px",
+        fontSize: "13px",
+        background: "#f8fafc",
+        border: "1px solid #e2e8f0",
+        borderRadius: "10px",
         outline: "none",
-        color: "#1a1a18",
+        color: "#1e293b",
         boxSizing: "border-box",
       }}
     />

@@ -39,48 +39,57 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(0, 0, 0, 0.4)",
+        background: "rgba(15, 23, 42, 0.4)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         zIndex: 1000,
+        backdropFilter: "blur(4px)",
       }}
     >
       <div
         style={{
-          background: "#f5f3ee",
-          borderRadius: "12px",
+          background: "#ffffff",
+          borderRadius: "16px",
           width: "100%",
-          maxWidth: "500px",
-          boxShadow: "0 20px 40px rgba(0, 0, 0, 0.2)",
+          maxWidth: "420px",
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
+          border: "1px solid #e2e8f0",
+          overflow: "hidden",
         }}
       >
         <div
           style={{
-            padding: "16px 20px",
-            borderBottom: "1px solid #dddbd4",
+            padding: "20px 24px",
+            borderBottom: "1px solid #e2e8f0",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
           }}
         >
-          <h2 style={{ margin: 0, fontSize: "16px", fontWeight: 600 }}>{title}</h2>
+          <h2 style={{ margin: 0, fontSize: "18px", fontWeight: 600, color: "#1e293b" }}>
+            {title}
+          </h2>
           <button
             onClick={onClose}
             style={{
-              background: "none",
+              background: "#f1f5f9",
               border: "none",
-              fontSize: "20px",
+              width: "28px",
+              height: "28px",
+              borderRadius: "8px",
+              fontSize: "16px",
               cursor: "pointer",
-              color: "#8a8a80",
-              padding: "4px",
-              lineHeight: 1,
+              color: "#64748b",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             ×
           </button>
         </div>
-        <div style={{ padding: "20px" }}>{children}</div>
+        <div style={{ padding: "24px" }}>{children}</div>
       </div>
     </div>
   );

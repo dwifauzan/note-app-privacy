@@ -124,6 +124,7 @@ export async function exportToPDF(title: string, content: string, tags: string[]
   }
 
   doc.save(`${title.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`);
+  return Promise.resolve();
 }
 
 export async function exportToDOCX(title: string, content: string, tags: string[] = []) {
@@ -222,4 +223,5 @@ export async function exportToDOCX(title: string, content: string, tags: string[
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+  return Promise.resolve();
 }

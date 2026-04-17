@@ -14,7 +14,7 @@ export default function NoteRenderer({
   const lines = content.split("\n");
 
   return (
-    <div style={{ fontSize: "14px", lineHeight: "1.75" }}>
+    <div style={{ fontSize: "15px", lineHeight: "1.8", color: "#334155" }}>
       {lines.map((line, i) => renderLine(line, i, notes, onLinkClick))}
     </div>
   );
@@ -36,10 +36,11 @@ function renderInline(
           key={j}
           onClick={() => target && onLinkClick(target.id)}
           style={{
-            color: "#5c7a5c",
-            borderBottom: "1px solid #8aab8a",
+            color: "#7c3aed",
+            textDecoration: "underline",
+            textUnderlineOffset: "3px",
             cursor: target ? "pointer" : "default",
-            fontStyle: "italic",
+            fontWeight: 500,
           }}
         >
           {linkTitle}
@@ -61,13 +62,13 @@ function renderLine(
       <h1
         key={i}
         style={{
-          fontSize: "20px",
-          fontWeight: 600,
-          color: "#1a1a18",
-          marginBottom: "16px",
+          fontSize: "28px",
+          fontWeight: 700,
+          color: "#1e293b",
+          marginBottom: "20px",
           marginTop: 0,
           letterSpacing: "-0.02em",
-          fontFamily: "'DM Serif Display', Georgia, serif",
+          lineHeight: "1.3",
         }}
       >
         {line.slice(2)}
@@ -82,9 +83,9 @@ function renderLine(
         style={{
           fontSize: "14px",
           fontWeight: 600,
-          color: "#3a3a35",
-          marginTop: "24px",
-          marginBottom: "8px",
+          color: "#64748b",
+          marginTop: "28px",
+          marginBottom: "10px",
           textTransform: "uppercase",
           letterSpacing: "0.06em",
         }}
@@ -101,29 +102,29 @@ function renderLine(
         key={i}
         style={{
           display: "flex",
-          gap: "8px",
-          marginBottom: "4px",
+          gap: "10px",
+          marginBottom: "6px",
           alignItems: "center",
         }}
       >
         <span
           style={{
-            width: "14px",
-            height: "14px",
-            border: "1px solid #bbb",
-            borderRadius: "3px",
-            background: done ? "#5c7a5c" : "transparent",
+            width: "16px",
+            height: "16px",
+            border: "1px solid #cbd5e1",
+            borderRadius: "4px",
+            background: done ? "#7c3aed" : "transparent",
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
             flexShrink: 0,
           }}
         >
-          {done && <span style={{ color: "#fff", fontSize: "9px" }}>✓</span>}
+          {done && <span style={{ color: "#fff", fontSize: "10px" }}>✓</span>}
         </span>
         <span
           style={{
-            color: done ? "#8a8a80" : "#3a3a35",
+            color: done ? "#94a3b8" : "#334155",
             textDecoration: done ? "line-through" : "none",
           }}
         >
@@ -135,9 +136,9 @@ function renderLine(
 
   if (line.startsWith("- ") || line.startsWith("* ")) {
     return (
-      <div key={i} style={{ display: "flex", gap: "8px", marginBottom: "4px" }}>
-        <span style={{ color: "#8a8a80", marginTop: "2px" }}>·</span>
-        <span style={{ color: "#3a3a35" }}>
+      <div key={i} style={{ display: "flex", gap: "10px", marginBottom: "6px" }}>
+        <span style={{ color: "#94a3b8", marginTop: "4px" }}>•</span>
+        <span style={{ color: "#334155" }}>
           {renderInline(line.slice(2), notes, onLinkClick)}
         </span>
       </div>
@@ -148,9 +149,9 @@ function renderLine(
     const num = line.match(/^\d+/)?.[0];
     const text = line.replace(/^\d+\.\s*/, "");
     return (
-      <div key={i} style={{ display: "flex", gap: "8px", marginBottom: "4px" }}>
-        <span style={{ color: "#8a8a80", minWidth: "16px" }}>{num}.</span>
-        <span style={{ color: "#3a3a35" }}>
+      <div key={i} style={{ display: "flex", gap: "10px", marginBottom: "6px" }}>
+        <span style={{ color: "#94a3b8", minWidth: "20px" }}>{num}.</span>
+        <span style={{ color: "#334155" }}>
           {renderInline(text, notes, onLinkClick)}
         </span>
       </div>
@@ -162,13 +163,13 @@ function renderLine(
   }
 
   if (line === "") {
-    return <div key={i} style={{ height: "8px" }} />;
+    return <div key={i} style={{ height: "12px" }} />;
   }
 
   return (
     <p
       key={i}
-      style={{ margin: "0 0 6px 0", color: "#3a3a35", lineHeight: "1.75" }}
+      style={{ margin: "0 0 8px 0", color: "#334155", lineHeight: "1.8" }}
     >
       {renderInline(line, notes, onLinkClick)}
     </p>

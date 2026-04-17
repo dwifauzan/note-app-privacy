@@ -1,15 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+
+type ToastType = "success" | "error" | "info";
+
+type ToastItem = {
+  id: number;
+  message: string;
+  type: ToastType;
+};
+
+type ToastContextType = {
+  showToast: (message: string, type?: ToastType) => void;
+};
+
+const ToastContext = createContext<ToastContextType | null>(null);
+
+export function useToast() {
+  const context = useContext(ToastContext);
+  if (!context) {
+    return {
+      showToast: (message: string, type: ToastType = "success") => {
+        console.log(`[Toast] ${type}: ${message}`);
+      },
+    };
+  }
+  return context;
+}
 
 type ToastProps = {
   message: string;
-  type?: "success" | "error" | "info";
+  type?: ToastType;
   onClose: () => void;
   duration?: number;
 };
 
-export default function Toast({ message, type = "success", onClose, duration = 3000 }: ToastProps) {
+function Toast({ message, type = "success", onClose, duration = 3000 }: ToastProps) {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
@@ -20,7 +46,7 @@ export default function Toast({ message, type = "success", onClose, duration = 3
     return () => clearTimeout(timer);
   }, [duration, onClose]);
 
-  const bgColor = type === "success" ? "#2e7d32" : type === "error" ? "#d32f2f" : "#1565c0";
+  const bgColor = type === "success" ? "var(--success)" : type === "error" ? "var(--danger)" : "var(--accent)";
 
   return (
     <div
@@ -46,38 +72,21 @@ export default function Toast({ message, type = "success", onClose, duration = 3
   );
 }
 
-let toastCallback: ((message: string, type?: "success" | "error" | "info") => void) | null = null;
+export function ToastProvider({ children }: { children: ReactNode }) {
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
 
-export function showToast(message: string, type: "success" | "error" | "info" = "success") {
-  if (toastCallback) {
-    toastCallback(message, type);
-  }
-}
-
-export function ToastContainer({ 
-  onMount 
-}: { 
-  onMount: (callback: (message: string, type?: "success" | "error" | "info") => void) => void 
-}) {
-  const [toasts, setToasts] = useState<Array<{ id: number; message: string; type: "success" | "error" | "info" }>>([]);
-
-  useEffect(() => {
-    toastCallback = (message, type = "success") => {
-      const id = Date.now();
-      setToasts((prev) => [...prev, { id, message, type }]);
-    };
-    onMount(toastCallback);
-    return () => {
-      toastCallback = null;
-    };
-  }, [onMount]);
+  const showToast = (message: string, type: ToastType = "success") => {
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, message, type }]);
+  };
 
   const removeToast = (id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
   return (
-    <>
+    <ToastContext.Provider value={{ showToast }}>
+      {children}
       {toasts.map((toast) => (
         <Toast
           key={toast.id}
@@ -86,6 +95,6 @@ export function ToastContainer({
           onClose={() => removeToast(toast.id)}
         />
       ))}
-    </>
+    </ToastContext.Provider>
   );
 }
