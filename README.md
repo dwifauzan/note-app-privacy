@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Stack
 
-## Getting Started
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js (App Router, TypeScript) |
+| Desktop | Tauri v2 (Rust) |
+| Database | SQLite via `tauri-plugin-sql` |
+| ORM | Drizzle ORM |
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Feature
+
+- **Markdown editor** — write and preview notes in format `.md`
+- **Bi-directional links** — link note with `[[name note]]`, backlinks automatic display
+- **Tag system** — give color & categorize notes with tags
+- **Daily notes** — automatic notes page per day *(coming soon)*
+- **Graph view** — visualization of connections between notes *(coming soon)*
+- **Canvas** — arrange notes visually on a whiteboard *(coming soon)*
+
+---
+
+## How Its Works
+
+Each note is stored as a `.md` file on disk—it can be opened in any application. SQLite only stores metadata such as tags, links between notes, and search information. Deleting the application will not delete your notes.
+
+```
+File .md  →  fill note (portable, can use anywhere)
+SQLite    →  metadata, tags, links, search index
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Prerequisites
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Node.js 18+
+- Rust & Cargo
+- Tauri CLI v2
 
-## Learn More
+### Setup
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# clone repo
+git clone https://github.com/username/pkm-app.git
+cd pkm-app
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# install dependencies
+npm install
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# setup database
+npm run db:generate
+npm run db:migrate
 
-## Deploy on Vercel
+# run with mode development for now
+npm run tauri dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Structure Folder
+
+```
+src/
+├── app/                 
+├── components/
+│   ├── layout/             
+│   ├── notes/              
+│   └── ui/                 
+├── hooks/                 
+├── lib/                  
+└── db/
+    ├── schema.ts         
+    ├── driver.ts        
+    ├── migrate.ts         
+    └── migrations/       
+src-tauri/                 
+```
+
+---
+
+## Scripts
+
+```bash
+npm run dev           # running Next.js dev server
+npm run tauri dev     # running Tauri + Next.js same time
+npm run tauri build   # build the aplication 
+npm run db:generate   # generate file migration from schema database
+npm run db:migrate    # running migration to database
+npm run db:studio     # open Drizzle Studio for look inside database
+```
