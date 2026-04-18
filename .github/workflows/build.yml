@@ -35,14 +35,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Tauri CLI
+        run: npm install -D @tauri-apps/cli
+
       - name: Build frontend
         run: npm run build
 
       - name: Build Tauri app (Linux)
-        run: |
-          cd src-tauri
-          cargo build --release
-          cargo tauri build --bundles deb,rpm,appimage
+        run: npx tauri build --bundles deb,rpm,appimage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
@@ -82,14 +82,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Tauri CLI
+        run: npm install -D @tauri-apps/cli
+
       - name: Build frontend
         run: npm run build
 
       - name: Build Tauri app (Windows)
-        run: |
-          cd src-tauri
-          cargo build --release
-          cargo tauri build --bundles msi,nsis
+        run: npx tauri build --bundles msi,nsis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
@@ -128,14 +128,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Tauri CLI
+        run: npm install -D @tauri-apps/cli
+
       - name: Build frontend
         run: npm run build
 
       - name: Build Tauri app (macOS)
-        run: |
-          cd src-tauri
-          cargo build --release
-          cargo tauri build --bundles dmg,app
+        run: npx tauri build --bundles dmg,app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
