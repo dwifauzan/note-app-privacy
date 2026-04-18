@@ -1,38 +1,49 @@
-## Stack
+# PKM App - Personal Knowledge Management
 
-| Layer | Technology |
-|---|---|
-| Frontend | Next.js (App Router, TypeScript) |
-| Desktop | Tauri v2 (Rust) |
-| Database | SQLite via `tauri-plugin-sql` |
-| ORM | Drizzle ORM |
+A desktop note-taking application built with Next.js + Tauri.
+
+## Download Latest Version
+
+### Linux
+- [.deb (Ubuntu/Debian)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App_0.1.0-beta_amd64.deb)
+- [.rpm (Fedora/RHEL)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App-0.1.0-beta-1.x86_64.rpm)
+- [.AppImage (Universal)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App_0.1.0-beta_amd64.AppImage)
+
+### Windows
+- [.msi Installer](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App_0.1.0-beta_x64_en-US.msi)
+- [.exe (Portable)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App_0.1.0-beta_x64-setup.exe)
+
+### macOS
+- [.dmg Installer](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App_0.1.0-beta_aarch64.dmg)
+- [.app (Apple Silicon)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App_0.1.0-beta_universal.dmg)
 
 ---
 
-## Feature
+## Features
 
-- **Markdown editor** — write and preview notes in format `.md`
-- **Bi-directional links** — link note with `[[name note]]`, backlinks automatic display
-- **Tag system** — give color & categorize notes with tags
-- **Daily notes** — automatic notes page per day *(coming soon)*
-- **Graph view** — visualization of connections between notes *(coming soon)*
-- **Canvas** — arrange notes visually on a whiteboard *(coming soon)*
+- **Markdown editor** — write and preview notes in `.md` format
+- **Pin notes** — pin important notes to the top
+- **Tag system** — organize notes with colored tags
+- **Bi-directional links** — link notes with `[[note name]]`
+- **Created date** — see when each note was created
+- **Dark mode** — automatic dark/light theme
 
 ---
 
-## How Its Works
+## How It Works
 
-Each note is stored as a `.md` file on disk—it can be opened in any application. SQLite only stores metadata such as tags, links between notes, and search information. Deleting the application will not delete your notes.
+Each note is stored as a `.md` file on disk—it can be opened in any app. SQLite stores metadata like tags, links, and search info.
 
 ```
-File .md  →  fill note (portable, can use anywhere)
-SQLite    →  metadata, tags, links, search index
+Note File (.md)  →  Your actual notes (portable)
+SQLite DB        →  Tags, links, search index
 ```
 
 ---
+
+## Development
 
 ### Prerequisites
-
 - Node.js 18+
 - Rust & Cargo
 - Tauri CLI v2
@@ -41,50 +52,32 @@ SQLite    →  metadata, tags, links, search index
 
 ```bash
 # clone repo
-git clone https://github.com/username/pkm-app.git
-cd pkm-app
+git clone https://github.com/dwifauzan/note-app.git
+cd note-app
 
 # install dependencies
 npm install
 
-# setup database
-npm run db:generate
-npm run db:migrate
-
-# run with mode development for now
+# run in development mode
 npm run tauri dev
 ```
 
----
-
-## Structure Folder
-
-```
-src/
-├── app/                 
-├── components/
-│   ├── layout/             
-│   ├── notes/              
-│   └── ui/                 
-├── hooks/                 
-├── lib/                  
-└── db/
-    ├── schema.ts         
-    ├── driver.ts        
-    ├── migrate.ts         
-    └── migrations/       
-src-tauri/                 
-```
-
----
-
-## Scripts
+### Build
 
 ```bash
-npm run dev           # running Next.js dev server
-npm run tauri dev     # running Tauri + Next.js same time
-npm run tauri build   # build the aplication 
-npm run db:generate   # generate file migration from schema database
-npm run db:migrate    # running migration to database
-npm run db:studio     # open Drizzle Studio for look inside database
+# build for current platform
+npm run tauri build
+
+# build for all platforms (needs proper setup)
 ```
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | Next.js 16 (App Router, TypeScript) |
+| Desktop | Tauri v2 (Rust) |
+| Database | SQLite via tauri-plugin-sql |
+| ORM | Drizzle ORM |
