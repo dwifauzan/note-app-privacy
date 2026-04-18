@@ -2,6 +2,7 @@ export type Note = {
   id: number;
   title: string;
   folder: string;
+  created: string;
   updated: string;
   pinned: boolean;
   tags: string[];
@@ -18,6 +19,7 @@ export const NOTES: Note[] = [
     id: 1,
     title: "belajar-rust",
     folder: "learning",
+    created: "5h lalu",
     updated: "Hari ini",
     pinned: true,
     tags: ["rust", "programming"],
@@ -26,6 +28,7 @@ export const NOTES: Note[] = [
     id: 2,
     title: "ownership & borrowing",
     folder: "learning",
+    created: "1h lalu",
     updated: "Kemarin",
     pinned: false,
     tags: ["rust"],
@@ -34,6 +37,7 @@ export const NOTES: Note[] = [
     id: 3,
     title: "project pkm app",
     folder: "projects",
+    created: "2h lalu",
     updated: "2 hari lalu",
     pinned: true,
     tags: ["tauri", "nextjs"],
@@ -42,6 +46,7 @@ export const NOTES: Note[] = [
     id: 4,
     title: "daily — 12 Apr",
     folder: "daily",
+    created: "3h lalu",
     updated: "Hari ini",
     pinned: false,
     tags: [],
@@ -50,6 +55,7 @@ export const NOTES: Note[] = [
     id: 5,
     title: "ide fitur graph view",
     folder: "ideas",
+    created: "4h lalu",
     updated: "3 hari lalu",
     pinned: false,
     tags: ["pkm"],
@@ -58,6 +64,7 @@ export const NOTES: Note[] = [
     id: 6,
     title: "lifetimes in rust",
     folder: "learning",
+    created: "5h lalu",
     updated: "4 hari lalu",
     pinned: false,
     tags: ["rust"],

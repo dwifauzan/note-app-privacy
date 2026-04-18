@@ -16,7 +16,7 @@ import {
   Tag,
   mapDbNoteToNote,
 } from "@/hooks/usePKM";
-import { createNote, deleteNote } from "@/lib/notes";
+import { createNote, deleteNote, updateNote } from "@/lib/notes";
 import { generateFilePath, writeNoteFile, deleteNoteFile } from "@/lib/files";
 import { exportToPDF, exportToDOCX } from "@/lib/export";
 import { ToastProvider, useToast } from "@/components/ui/Toast";
@@ -220,6 +220,15 @@ export default function PKMApp() {
     setActiveNoteId(id);
   };
 
+  const handlePinToggle = async (id: number, pinned: boolean) => {
+    try {
+      await updateNote(id, { isPinned: pinned ? 1 : 0 });
+      await refetch();
+    } catch (err) {
+      console.error("Error toggling pin:", err);
+    }
+  };
+
   const handleNewNote = () => {
     setNewNoteTitle("");
     setNewNoteContent("");
@@ -313,6 +322,7 @@ export default function PKMApp() {
           onFolderChange={setActiveFolder}
           onSearchChange={setSearch}
           onNewNote={handleNewNote}
+          onPinToggle={handlePinToggle}
         />
 
         <div
@@ -378,8 +388,8 @@ export default function PKMApp() {
                   border: "1px solid var(--border)",
                   borderRadius: "10px",
                   fontSize: "15px",
-                  background: "var(--background)",
-                  color: "var(--foreground)",
+                  background: "#ffffff",
+                  color: "#1e293b",
                   outline: "none",
                   boxSizing: "border-box",
                 }}
@@ -400,8 +410,8 @@ export default function PKMApp() {
                   border: "1px solid var(--border)",
                   borderRadius: "10px",
                   fontSize: "14px",
-                  background: "var(--background)",
-                  color: "var(--foreground)",
+                  background: "#ffffff",
+                  color: "#1e293b",
                   outline: "none",
                   boxSizing: "border-box",
                   cursor: "pointer",
@@ -428,8 +438,8 @@ export default function PKMApp() {
                   border: "1px solid var(--border)",
                   borderRadius: "10px",
                   fontSize: "14px",
-                  background: "var(--background)",
-                  color: "var(--foreground)",
+                  background: "#ffffff",
+                  color: "#1e293b",
                   outline: "none",
                   resize: "vertical",
                   fontFamily: "inherit",
@@ -495,8 +505,8 @@ export default function PKMApp() {
                   border: "1px solid var(--border)",
                   borderRadius: "10px",
                   fontSize: "14px",
-                  background: "var(--background)",
-                  color: "var(--foreground)",
+                  background: "#ffffff",
+                  color: "#1e293b",
                   outline: "none",
                   resize: "vertical",
                   fontFamily: "monospace",
@@ -589,9 +599,10 @@ export default function PKMApp() {
                         padding: "4px 10px",
                         background: tag.colorTag || "var(--border-light)",
                         borderRadius: "20px",
+                        border: "1px solid rgba(0,0,0,0.1)",
                       }}
                     >
-                      <span style={{ fontSize: "12px", fontWeight: 500, color: "var(--foreground)" }}>
+                      <span style={{ fontSize: "12px", fontWeight: 500, color: "#1e293b" }}>
                         {tag.name}
                       </span>
                       <button
@@ -703,8 +714,8 @@ export default function PKMApp() {
                       border: "1px solid var(--border)",
                       borderRadius: "6px",
                       fontSize: "13px",
-                      background: "var(--sidebar-bg)",
-                      color: "var(--foreground)",
+                      background: "#ffffff",
+                      color: "#1e293b",
                       outline: "none",
                       boxSizing: "border-box",
                     }}
@@ -723,8 +734,8 @@ export default function PKMApp() {
                     border: "1px solid var(--border)",
                     borderRadius: "6px",
                     fontSize: "13px",
-                    background: "var(--sidebar-bg)",
-                    color: "var(--foreground)",
+                    background: "#ffffff",
+                    color: "#1e293b",
                     outline: "none",
                     cursor: "pointer",
                   }}
@@ -795,9 +806,10 @@ export default function PKMApp() {
                         padding: "8px 10px",
                         background: tag.colorTag || "var(--border-light)",
                         borderRadius: "6px",
+                        border: "1px solid rgba(0,0,0,0.1)",
                       }}
                     >
-                      <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--foreground)" }}>
+                      <span style={{ fontSize: "13px", fontWeight: 500, color: "#1e293b" }}>
                         {tag.name}
                       </span>
                       <button

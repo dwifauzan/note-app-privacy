@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "note-app",
-  "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "productName": "PKM App",
+  "version": "0.1.0-beta",
+  "identifier": "com.pkm.notes",
   "build": {
     "frontendDist": "../out",
     "devUrl": "http://localhost:3000",
@@ -12,11 +12,14 @@
   "app": {
     "windows": [
       {
-        "title": "note-app easy use",
-        "width": 800,
-        "height": 600,
+        "title": "PKM App",
+        "width": 1100,
+        "height": 700,
+        "minWidth": 800,
+        "minHeight": 500,
         "resizable": true,
-        "fullscreen": false
+        "fullscreen": false,
+        "center": true
       }
     ],
     "security": {
@@ -32,11 +35,16 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "windows": {
+      "wix": {
+        "language": "en-US"
+      }
+    }
   },
   "plugins": {
     "sql": {
-      "preload": ["sqlite:/home/patrick/Documents/note-app-reproject/db/pkm.db"]
+      "preload": ["sqlite:pkm.db"]
     }
   }
 }

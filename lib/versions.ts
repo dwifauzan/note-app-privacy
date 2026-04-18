@@ -19,15 +19,19 @@ export async function getVersionsByNoteId(noteId: number): Promise<NoteVersion[]
 }
 
 export async function createVersion(noteId: number, content: string): Promise<NoteVersion> {
-  const [newVersion] = await db
-    .insert(noteVersion)
-    .values({
-      noteId,
-      historyContent: content,
-      createdAt: new Date(),
-    })
-    .returning();
-  return newVersion as unknown as NoteVersion;
+  await db.insert(noteVersion).values({
+    noteId,
+    historyContent: content,
+    createdAt: new Date(),
+  });
+  
+  const versions = await db
+    .select()
+    .from(noteVersion)
+    .where(eq(noteVersion.noteId, noteId))
+    .orderBy(desc(noteVersion.id))
+    .limit(1);
+  return versions[0] as unknown as NoteVersion;
 }
 
 export async function deleteVersion(id: number): Promise<void> {

@@ -12,6 +12,7 @@ export type Note = {
   id: number;
   title: string;
   folder: string;
+  created: string;
   updated: string;
   pinned: boolean;
   tags: string[];
@@ -30,14 +31,35 @@ export type Backlink = {
 };
 
 export function mapDbNoteToNote(dbNote: DbNote, tags: DbTag[]): Note {
+  const createdDate = dbNote.createdAt ? new Date(dbNote.createdAt) : new Date();
   return {
     id: dbNote.id,
     title: dbNote.title,
     folder: dbNote.folder || "",
+    created: formatDate(createdDate),
     updated: "Baru saja",
     pinned: dbNote.isPinned === 1,
     tags: tags.map((t) => t.name),
   };
+}
+
+function formatDate(date: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return "Baru saja";
+  if (diffMins < 60) return `${diffMins}m lalu`;
+  if (diffHours < 24) return `${diffHours}j lalu`;
+  if (diffDays < 7) return `${diffDays}h lalu`;
+  
+  return date.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "short",
+    year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+  });
 }
 
 function mapDbBacklinkToBacklink(bl: DbBacklink): Backlink {

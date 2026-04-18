@@ -7,6 +7,7 @@ export const note = sqliteTable('note', {
   folder:    text('folder'),
   wordCount: integer('word_count').default(0),
   isPinned:  integer('is_pinned').default(0),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 })
 
 export const noteVersion = sqliteTable('note_version', {

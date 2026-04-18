@@ -1,38 +1,109 @@
-name: Build/release
+name: Build Release
 
 on:
   push:
     tags:
       - v*
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
-  release:
-    runs-on: ${{ matrix.os }}
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-
+  build-linux:
+    runs-on: ubuntu-latest
     steps:
-      - name: Check repository
+      - name: Checkout
         uses: actions/checkout@v4
+
       - name: Enable Corepack
         run: corepack enable
-      - name: Use Node.js
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'yarn'
-      - name: Electron Builder
-        uses: DarkGuy10/action-electron-builder@v1.0.0
+          cache: 'npm'
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          github_token: ${{ secrets.github_token }}
-          build_script_name: pre-build
-          package_manager: yarn
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          tagName: ${{ github.ref_name }}
+          releaseName: 'PKM App v__VERSION__'
+          releaseBody: 'PKM App - Personal Knowledge Management Desktop Application'
+          releaseDraft: true
+          prerelease: false
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: 'PKM App v__VERSION__'
+          releaseBody: 'PKM App - Personal Knowledge Management Desktop Application'
+          releaseDraft: true
+          prerelease: false
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: 'PKM App v__VERSION__'
+          releaseBody: 'PKM App - Personal Knowledge Management Desktop Application'
+          releaseDraft: true
+          prerelease: false

@@ -74,6 +74,9 @@ export default function Home() {
         title: "Catatan Pertama",
         filePath: seedPath,
         folder: "inbox",
+        wordCount: 0,
+        isPinned: 0,
+        createdAt: new Date(),
       });
 
       const semua = await db.select().from(note);

@@ -49,38 +49,38 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
     >
       <div
         style={{
-          background: "#ffffff",
+          background: "var(--sidebar-bg)",
           borderRadius: "16px",
           width: "100%",
           maxWidth: "420px",
           boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
-          border: "1px solid #e2e8f0",
+          border: "1px solid var(--border)",
           overflow: "hidden",
         }}
       >
         <div
           style={{
             padding: "20px 24px",
-            borderBottom: "1px solid #e2e8f0",
+            borderBottom: "1px solid var(--border)",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
           }}
         >
-          <h2 style={{ margin: 0, fontSize: "18px", fontWeight: 600, color: "#1e293b" }}>
+          <h2 style={{ margin: 0, fontSize: "18px", fontWeight: 600, color: "var(--foreground)" }}>
             {title}
           </h2>
           <button
             onClick={onClose}
             style={{
-              background: "#f1f5f9",
+              background: "var(--border-light)",
               border: "none",
               width: "28px",
               height: "28px",
               borderRadius: "8px",
               fontSize: "16px",
               cursor: "pointer",
-              color: "#64748b",
+              color: "var(--text-muted)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",

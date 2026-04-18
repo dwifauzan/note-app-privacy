@@ -22,17 +22,17 @@ export async function createNote(data: {
   filePath: string;
   folder?: string;
 }): Promise<Note> {
-  const [newNote] = await db
-    .insert(note)
-    .values({
-      title: data.title,
-      filePath: data.filePath,
-      folder: data.folder || null,
-      wordCount: 0,
-      isPinned: 0,
-    })
-    .returning();
-  return newNote;
+  await db.insert(note).values({
+    title: data.title,
+    filePath: data.filePath,
+    folder: data.folder || null,
+    wordCount: 0,
+    isPinned: 0,
+    createdAt: new Date(),
+  });
+  
+  const newNote = await db.select().from(note).where(eq(note.filePath, data.filePath)).limit(1);
+  return newNote[0]!;
 }
 
 export async function updateNote(
@@ -45,12 +45,10 @@ export async function updateNote(
     isPinned: number;
   }>
 ): Promise<Note> {
-  const [updatedNote] = await db
-    .update(note)
-    .set(data)
-    .where(eq(note.id, id))
-    .returning();
-  return updatedNote;
+  await db.update(note).set(data).where(eq(note.id, id));
+  
+  const updatedNote = await db.select().from(note).where(eq(note.id, id)).limit(1);
+  return updatedNote[0]!;
 }
 
 export async function deleteNote(id: number): Promise<Note | null> {

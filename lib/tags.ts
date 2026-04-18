@@ -12,15 +12,14 @@ export async function createTag(data: {
   name: string;
   colorTag?: string;
 }): Promise<Tag> {
-  const [newTag] = await db
-    .insert(tags)
-    .values({
-      name: data.name,
-      colorTag: data.colorTag || null,
-      createdAt: new Date(),
-    })
-    .returning();
-  return newTag;
+  await db.insert(tags).values({
+    name: data.name,
+    colorTag: data.colorTag || null,
+    createdAt: new Date(),
+  });
+  
+  const newTag = await db.select().from(tags).where(eq(tags.name, data.name)).limit(1);
+  return newTag[0]!;
 }
 
 export async function deleteTag(id: number): Promise<void> {

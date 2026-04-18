@@ -22,6 +22,7 @@ type SidebarProps = {
   onFolderChange: (folder: string) => void;
   onSearchChange: (value: string) => void;
   onNewNote: () => void;
+  onPinToggle: (id: number, pinned: boolean) => void;
 };
 
 export default function Sidebar({
@@ -33,6 +34,7 @@ export default function Sidebar({
   onFolderChange,
   onSearchChange,
   onNewNote,
+  onPinToggle,
 }: SidebarProps) {
   const filtered = notes.filter((n) => {
     const matchFolder = activeFolder === "semua" || n.folder === activeFolder;
@@ -52,7 +54,7 @@ export default function Sidebar({
         borderRight: "1px solid #e2e8f0",
         display: "flex",
         flexDirection: "column",
-        overflow: "hidden",
+        overflow: "visible",
       }}
     >
       <div style={{ padding: "20px 20px 16px" }}>
@@ -102,7 +104,7 @@ export default function Sidebar({
         })}
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "8px 8px 16px" }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "visible", padding: "8px 8px 16px" }}>
         {pinned.length > 0 && (
           <>
             <div
@@ -123,6 +125,7 @@ export default function Sidebar({
                 note={n}
                 active={activeNote === n.id}
                 onClick={() => onNoteClick(n.id)}
+                onPinToggle={onPinToggle}
               />
             ))}
           </>
@@ -150,6 +153,7 @@ export default function Sidebar({
                 note={n}
                 active={activeNote === n.id}
                 onClick={() => onNoteClick(n.id)}
+                onPinToggle={onPinToggle}
               />
             ))}
           </>
