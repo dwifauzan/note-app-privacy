@@ -1,6 +1,6 @@
 [package]
 name = "pkm-app"
-version = "0.1.0-beta"
+version = "0.1.0.1"
 description = "PKM - Personal Knowledge Management App"
 authors = ["PKM"]
 license = "MIT"
