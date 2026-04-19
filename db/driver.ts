@@ -1,11 +1,8 @@
 import Database from '@tauri-apps/plugin-sql'
 import { drizzle } from 'drizzle-orm/sqlite-proxy'
 import * as schema from './schema'
-import { isTauriRuntime } from './tauri-env'
 
-const DB_PATH = isTauriRuntime() 
-  ? 'sqlite:pkm.db' 
-  : '/home/patrick/Documents/note-app-reproject/db/pkm.db'
+const DB_PATH = 'sqlite:/home/patrick/Documents/note-app-reproject/db/pkm.db'
 
 let sqlitePromise: ReturnType<typeof Database.load> | null = null
 let initPromise: Promise<void> | null = null
