@@ -5,17 +5,18 @@ A desktop note-taking application built with Next.js + Tauri.
 ## Download Latest Version
 
 ### Linux
-- [.deb (Ubuntu/Debian)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App_0.1.0-beta_amd64.deb)
-- [.rpm (Fedora/RHEL)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App-0.1.0-beta-1.x86_64.rpm)
-- [.AppImage (Universal)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App_0.1.0-beta_amd64.AppImage)
+- [.deb (Ubuntu/Debian)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_amd64.deb)
+- [.rpm (Fedora/RHEL)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App-0.1.0-1.x86_64.rpm)
+- [.AppImage (Universal)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_amd64.AppImage)
 
 ### Windows
-- [.msi Installer](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App_0.1.0-beta_x64_en-US.msi)
-- [.exe (Portable)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App_0.1.0-beta_x64-setup.exe)
+- [.msi Installer](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_x64_en-US.msi)
+- [.exe (NSIS Installer)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_x64-setup.exe)
 
 ### macOS
-- [.dmg Installer](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App_0.1.0-beta_aarch64.dmg)
-- [.app (Apple Silicon)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM%20App_0.1.0-beta_universal.dmg)
+- [.dmg (Intel)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_x64.dmg)
+- [.dmg (Apple Silicon)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_aarch64.dmg)
+- [.app.tar.gz](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_x64.app.tar.gz)
 
 ---
 
