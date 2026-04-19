@@ -4,19 +4,22 @@ A desktop note-taking application built with Next.js + Tauri.
 
 ## Download Latest Version
 
+**[Click here to see all available downloads](https://github.com/dwifauzan/note-app/releases/latest)**
+
+Or select your platform:
+
 ### Linux
-- [.deb (Ubuntu/Debian)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_amd64.deb)
-- [.rpm (Fedora/RHEL)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App-0.1.0-1.x86_64.rpm)
-- [.AppImage (Universal)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_amd64.AppImage)
+- [Download .deb](https://github.com/dwifauzan/note-app/releases/latest)
+- [Download .rpm](https://github.com/dwifauzan/note-app/releases/latest)
+- [Download .AppImage](https://github.com/dwifauzan/note-app/releases/latest)
 
 ### Windows
-- [.msi Installer](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_x64_en-US.msi)
-- [.exe (NSIS Installer)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_x64-setup.exe)
+- [Download .msi](https://github.com/dwifauzan/note-app/releases/latest)
+- [Download .exe](https://github.com/dwifauzan/note-app/releases/latest)
 
 ### macOS
-- [.dmg (Intel)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_x64.dmg)
-- [.dmg (Apple Silicon)](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_aarch64.dmg)
-- [.app.tar.gz](https://github.com/dwifauzan/note-app/releases/latest/download/PKM_App_0.1.0_x64.app.tar.gz)
+- [Download .dmg](https://github.com/dwifauzan/note-app/releases/latest)
+- [Download .app.tar.gz](https://github.com/dwifauzan/note-app/releases/latest)
 
 ---
 
@@ -68,8 +71,6 @@ npm run tauri dev
 ```bash
 # build for current platform
 npm run tauri build
-
-# build for all platforms (needs proper setup)
 ```
 
 ---
