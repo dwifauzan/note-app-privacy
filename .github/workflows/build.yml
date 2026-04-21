@@ -97,6 +97,7 @@ jobs:
 
       - name: List build output
         run: ls -la src-tauri/target/release/bundle/
+        shell: bash
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
