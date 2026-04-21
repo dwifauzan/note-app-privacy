@@ -44,7 +44,7 @@
   },
   "plugins": {
     "sql": {
-      "preload": ["sqlite:/home/patrick/Documents/note-app-reproject/db/pkm.db"]
+      "preload": ["sqlite:../db/pkm.db"]
     }
   }
 }

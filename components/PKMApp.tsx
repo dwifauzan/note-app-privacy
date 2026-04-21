@@ -292,7 +292,8 @@ export default function PKMApp() {
           justifyContent: "center",
           alignItems: "center",
           background: "#f8fafc",
-          fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+          fontFamily:
+            "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
           color: "#475569",
         }}
       >
@@ -307,7 +308,8 @@ export default function PKMApp() {
         style={{
           display: "flex",
           height: "100vh",
-          fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+          fontFamily:
+            "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
           background: "#f8fafc",
           color: "#1e293b",
           fontSize: "14px",
@@ -374,7 +376,9 @@ export default function PKMApp() {
           onClose={() => setShowCreateModal(false)}
           title="Catatan Baru"
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+          >
             <div>
               <input
                 type="text"
@@ -447,7 +451,14 @@ export default function PKMApp() {
                 }}
               />
             </div>
-            <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", paddingTop: "8px" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                justifyContent: "flex-end",
+                paddingTop: "8px",
+              }}
+            >
               <button
                 onClick={() => setShowCreateModal(false)}
                 style={{
@@ -470,14 +481,24 @@ export default function PKMApp() {
                   padding: "10px 20px",
                   border: "none",
                   borderRadius: "8px",
-                  background: newNoteTitle.trim() && !isCreating 
-                    ? "#93C5FD" 
-                    : "var(--border)",
-                  color: newNoteTitle.trim() && !isCreating ? "#1e293b" : "var(--text-muted)",
+                  background:
+                    newNoteTitle.trim() && !isCreating
+                      ? "#93C5FD"
+                      : "var(--border)",
+                  color:
+                    newNoteTitle.trim() && !isCreating
+                      ? "#1e293b"
+                      : "var(--text-muted)",
                   fontSize: "14px",
                   fontWeight: 500,
-                  cursor: newNoteTitle.trim() && !isCreating ? "pointer" : "not-allowed",
-                  boxShadow: newNoteTitle.trim() && !isCreating ? "0 2px 8px rgba(124, 58, 237, 0.3)" : "none",
+                  cursor:
+                    newNoteTitle.trim() && !isCreating
+                      ? "pointer"
+                      : "not-allowed",
+                  boxShadow:
+                    newNoteTitle.trim() && !isCreating
+                      ? "0 2px 8px rgba(124, 58, 237, 0.3)"
+                      : "none",
                 }}
               >
                 {isCreating ? "Membuat..." : "Buat Catatan"}
@@ -491,7 +512,9 @@ export default function PKMApp() {
           onClose={() => setShowEditModal(false)}
           title={`Edit: ${currentNote?.title || ""}`}
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+          >
             <div>
               <textarea
                 value={editContent}
@@ -515,7 +538,14 @@ export default function PKMApp() {
                 }}
               />
             </div>
-            <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", paddingTop: "8px" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                justifyContent: "flex-end",
+                paddingTop: "8px",
+              }}
+            >
               <button
                 onClick={() => setShowEditModal(false)}
                 style={{
@@ -556,7 +586,9 @@ export default function PKMApp() {
           onClose={() => setShowTagsModal(false)}
           title={`Kelola Tags: ${currentNote?.title || ""}`}
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+          >
             <div>
               <label
                 style={{
@@ -602,7 +634,13 @@ export default function PKMApp() {
                         border: "1px solid rgba(0,0,0,0.1)",
                       }}
                     >
-                      <span style={{ fontSize: "12px", fontWeight: 500, color: "#1e293b" }}>
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          fontWeight: 500,
+                          color: "#1e293b",
+                        }}
+                      >
                         {tag.name}
                       </span>
                       <button
@@ -639,7 +677,9 @@ export default function PKMApp() {
                 Tambah tag ke catatan ini
               </label>
               {isLoadingTags ? (
-                <div style={{ fontSize: "13px", color: "var(--text-muted-light)" }}>
+                <div
+                  style={{ fontSize: "13px", color: "var(--text-muted-light)" }}
+                >
                   Loading...
                 </div>
               ) : allTags.length === 0 ? (
@@ -655,7 +695,9 @@ export default function PKMApp() {
               ) : (
                 <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
                   {allTags
-                    .filter((tag) => !currentTags.some((ct) => ct.id === tag.id))
+                    .filter(
+                      (tag) => !currentTags.some((ct) => ct.id === tag.id),
+                    )
                     .map((tag) => (
                       <button
                         key={tag.id}
@@ -677,7 +719,12 @@ export default function PKMApp() {
                     allTags.every((tag) =>
                       currentTags.some((ct) => ct.id === tag.id),
                     ) && (
-                      <div style={{ fontSize: "12px", color: "var(--text-muted-light)" }}>
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          color: "var(--text-muted-light)",
+                        }}
+                      >
                         Semua tag sudah ditambahkan
                       </div>
                     )}
@@ -809,7 +856,13 @@ export default function PKMApp() {
                         border: "1px solid rgba(0,0,0,0.1)",
                       }}
                     >
-                      <span style={{ fontSize: "13px", fontWeight: 500, color: "#1e293b" }}>
+                      <span
+                        style={{
+                          fontSize: "13px",
+                          fontWeight: 500,
+                          color: "#1e293b",
+                        }}
+                      >
                         {tag.name}
                       </span>
                       <button
