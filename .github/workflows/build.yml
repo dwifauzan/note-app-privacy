@@ -90,6 +90,22 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+        # ------------------------------------------
+              # ADD THIS DEBUG STEP
+              # ------------------------------------------
+      - name: DEBUG: Check Out folder
+        run: |
+          echo "Checking root directory:"
+          ls -la
+          echo " "
+          echo "Checking 'out' folder:"
+          if (Test-Path "out") {
+            ls -la out
+          } else {
+            echo "OUT FOLDER DOES NOT EXIST!"
+          }
+              # ------------------------------------------
+
       - name: Build Tauri app (Windows)
         run: npx tauri build --bundles msi,nsis
         env:
