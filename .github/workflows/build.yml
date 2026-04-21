@@ -96,8 +96,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: List build output
-        run: ls -la src-tauri/target/release/bundle/
-        shell: bash
+        run: dir src-tauri/target/release/bundle/
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
