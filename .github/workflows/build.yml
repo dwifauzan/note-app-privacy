@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -53,8 +53,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: 'PKM App ${{ github.ref_name }}'
-          body: 'PKM App - Personal Knowledge Management Desktop Application'
+          name: "PKM App ${{ github.ref_name }}"
+          body: "PKM App - Personal Knowledge Management Desktop Application"
           draft: false
           prerelease: false
           files: |
@@ -62,7 +62,7 @@ jobs:
             src-tauri/target/release/bundle/rpm/*.rpm
             src-tauri/target/release/bundle/appimage/*.AppImage
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-windows:
     runs-on: windows-latest
@@ -76,7 +76,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -102,8 +102,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: 'PKM App ${{ github.ref_name }}'
-          body: 'PKM App - Personal Knowledge Management Desktop Application'
+          name: "PKM App ${{ github.ref_name }}"
+          body: "PKM App - Personal Knowledge Management Desktop Application"
           draft: false
           prerelease: false
           files: |
@@ -124,7 +124,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -150,8 +150,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: 'PKM App ${{ github.ref_name }}'
-          body: 'PKM App - Personal Knowledge Management Desktop Application'
+          name: "PKM App ${{ github.ref_name }}"
+          body: "PKM App - Personal Knowledge Management Desktop Application"
           draft: false
           prerelease: false
           files: |
