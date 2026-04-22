@@ -9,6 +9,7 @@
     "lint": "eslint",
     "tauri": "tauri",
     "tauri:build": "tauri build",
+    "tauri:buildwindows": "npm run build && npm run tauri build -- --runner cargo-xwin --target x86_64-pc-windows-msvc",
     "tauri:dev": "WEBKIT_DISABLE_COMPOSITING_MODE=1 WEBKIT_DISABLE_DMABUF_RENDERER=1 tauri dev",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",

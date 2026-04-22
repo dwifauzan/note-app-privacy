@@ -4,10 +4,10 @@
   "version": "0.1.0",
   "identifier": "com.pkm.notes",
   "build": {
-    "frontendDist": "./out",
     "devUrl": "http://localhost:3000",
     "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build"
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../out"
   },
   "app": {
     "windows": [
@@ -37,14 +37,16 @@
       "icons/icon.ico"
     ],
     "windows": {
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "installMode": "currentUser"
+      },
       "wix": {
         "language": "en-US"
       }
     }
   },
   "plugins": {
-    "sql": {
-      "preload": ["sqlite:../db/pkm.db"]
-    }
+    "sql": {}
   }
 }
