@@ -13,8 +13,8 @@
     "windows": [
       {
         "title": "PKM App",
-        "width": 1100,
-        "height": 700,
+        "width": 800,
+        "height": 450,
         "minWidth": 800,
         "minHeight": 500,
         "resizable": true,

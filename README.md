@@ -73,6 +73,30 @@ npm run tauri dev
 npm run tauri build
 ```
 
+### macOS Installer (Stable)
+
+Important: **macOS installers must be built on macOS** (or a macOS CI runner). Building on Linux/Windows cannot produce a working `.app/.dmg`.
+
+- **Local (on macOS)**:
+
+```bash
+npm install
+npm run build
+npm run tauri:build:macos
+```
+
+The output will be in `src-tauri/target/release/bundle/` (look for `dmg/`).
+
+- **GitHub Actions (recommended)**:
+  - Push a tag like `v0.1.0` and GitHub Actions will build **Windows + macOS** installers and attach them to the GitHub Release.
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+Note: For Gatekeeper “no warnings” installs, you’ll want **code signing + notarization** (Apple Developer ID). This repo currently builds unsigned installers by default.
+
 ---
 
 ## Tech Stack

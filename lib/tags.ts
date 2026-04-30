@@ -1,6 +1,6 @@
 import { db } from "@/db/driver";
 import { tags, noteTags } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export type Tag = typeof tags.$inferSelect;
 
@@ -54,5 +54,5 @@ export async function removeTagFromNote(
 ): Promise<void> {
   await db
     .delete(noteTags)
-    .where(eq(noteTags.noteId, noteId) && eq(noteTags.tagId, tagId));
+    .where(and(eq(noteTags.noteId, noteId), eq(noteTags.tagId, tagId)));
 }

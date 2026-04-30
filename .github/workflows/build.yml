@@ -64,57 +64,8 @@ jobs:
   #       env:
   #         # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Tauri CLI
-        run: npm install -D @tauri-apps/cli
-
-      - name: Build frontend
-        run: npm run build
-
-      - name: Build Tauri app (Windows)
-        run: npx tauri build --bundles msi,nsis
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: List build output
-        run: dir src-tauri/target/release/bundle/
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          update_existing: true
-          tag_name: ${{ github.ref_name }}
-          name: "PKM App ${{ github.ref_name }}"
-          body: "PKM App - Personal Knowledge Management Desktop Application"
-          draft: false
-          prerelease: false
-          files: |
-            src-tauri/target/release/bundle/msi/*.msi
-            src-tauri/target/release/bundle/nsis/*.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # build-macos:
-  #   runs-on: macos-latest
+  # build-windows:
+  #   runs-on: windows-latest
   #   steps:
   #     - name: Checkout
   #       uses: actions/checkout@v4
@@ -139,24 +90,74 @@ jobs:
   #     - name: Build frontend
   #       run: npm run build
 
-  #     - name: Build Tauri app (macOS)
-  #       run: npx tauri build --bundles dmg,app
+  #     - name: Build Tauri app (Windows)
+  #       run: npx tauri build --bundles msi,nsis
   #       env:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   #     - name: List build output
-  #       run: ls -la src-tauri/target/release/bundle/
+  #       run: dir src-tauri/target/release/bundle/
 
   #     - name: Create Release
   #       uses: softprops/action-gh-release@v2
   #       with:
+  #         update_existing: true
   #         tag_name: ${{ github.ref_name }}
   #         name: "PKM App ${{ github.ref_name }}"
   #         body: "PKM App - Personal Knowledge Management Desktop Application"
   #         draft: false
   #         prerelease: false
   #         files: |
-  #           src-tauri/target/release/bundle/dmg/*.dmg
-  #           src-tauri/target/release/bundle/app/*.app.tar.gz
+  #           src-tauri/target/release/bundle/msi/*.msi
+  #           src-tauri/target/release/bundle/nsis/*.exe
   #       env:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Tauri CLI
+        run: npm install -D @tauri-apps/cli
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Build Tauri app (macOS)
+        run: npx tauri build --bundles dmg,app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: List build output
+        run: ls -la src-tauri/target/release/bundle/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          update_existing: true
+          tag_name: ${{ github.ref_name }}
+          name: "PKM App ${{ github.ref_name }}"
+          body: "PKM App - Personal Knowledge Management Desktop Application"
+          draft: false
+          prerelease: false
+          files: |
+            src-tauri/target/release/bundle/dmg/*.dmg
+            src-tauri/target/release/bundle/app/*.app.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

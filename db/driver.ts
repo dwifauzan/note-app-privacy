@@ -1,16 +1,16 @@
 import Database from '@tauri-apps/plugin-sql'
 import { drizzle } from 'drizzle-orm/sqlite-proxy'
 import * as schema from './schema'
-
-const DB_PATH = 'sqlite:/home/patrick/Documents/note-app-reproject/db/pkm.db'
+import { getDbUrl } from './db-url'
 
 let sqlitePromise: ReturnType<typeof Database.load> | null = null
 let initPromise: Promise<void> | null = null
 
 async function getSqlite() {
   if (!sqlitePromise) {
-    console.log('Loading database from:', DB_PATH)
-    sqlitePromise = Database.load(DB_PATH)
+    const dbUrl = await getDbUrl()
+    console.log('Loading database from:', dbUrl)
+    sqlitePromise = Database.load(dbUrl)
   }
   return sqlitePromise
 }
@@ -67,20 +67,13 @@ async function initDatabase() {
     )
   `)
 
-  try {
-    await sqlite.execute(`ALTER TABLE note ADD COLUMN created_at INTEGER`)
-    await sqlite.execute(`UPDATE note SET created_at = ${Date.now()} WHERE created_at IS NULL`)
-  } catch (e) {
-    // Column may already exist
-  }
-
   await sqlite.execute(`PRAGMA foreign_keys = ON`)
   await sqlite.execute(`PRAGMA journal_mode = WAL`)
   
   console.log('Database initialized')
 }
 
-async function ensureDbReady() {
+export async function ensureDbReady() {
   if (!initPromise) {
     initPromise = initDatabase()
   }
